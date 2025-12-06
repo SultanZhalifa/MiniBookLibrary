@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Modern Gradient Colors -->
+    <color name="primary">#667EEA</color>
+    <color name="primary_dark">#5568D3</color>
+    <color name="accent">#F093FB</color>
+    <color name="background">#F8F9FA</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="on_primary">#FFFFFF</color>
+
+    <!-- Text Colors -->
+    <color name="text_primary">#1F2937</color>
+    <color name="text_secondary">#6B7280</color>
+
+    <!-- Status Colors -->
+    <color name="success">#10B981</color>
+    <color name="error">#EF4444</color>
+    <color name="warning">#F59E0B</color>
+
+    <!-- Switch Colors -->
+    <color name="switch_thumb">#667EEA</color>
+    <color name="switch_track">#E0E7FF</color>
+</resources>

@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">Book Library</string>
+    <string name="login">Login</string>
+    <string name="register">Register</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="email">Email</string>
+    <string name="book_title">Book Title</string>
+    <string name="author">Author</string>
+    <string name="add_book">Add Book</string>
+
+    <string-array name="categories">
+        <item>Fiction</item>
+        <item>Non-Fiction</item>
+        <item>Science</item>
+        <item>Technology</item>
+        <item>History</item>
+        <item>Biography</item>
+    </string-array>
+</resources>

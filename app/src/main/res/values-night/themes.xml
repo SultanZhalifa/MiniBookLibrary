@@ -1,0 +1,13 @@
+<resources>
+    <!-- Dark Theme -->
+    <style name="AppTheme" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="colorPrimary">#BB86FC</item>
+        <item name="colorPrimaryDark">#3700B3</item>
+        <item name="colorAccent">#CF6679</item>
+        <item name="android:windowBackground">#121212</item>
+        <item name="colorSurface">#1E1E1E</item>
+        <item name="colorOnSurface">#E1E1E1</item>
+        <item name="colorOnSurfaceVariant">#9E9E9E</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+    </style>
+</resources>
