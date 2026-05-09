@@ -1,8 +1,79 @@
-<resources>
-    <style name="AppTheme" parent="Theme.Material3.Light.NoActionBar">
-        <item name="colorPrimary">@color/primary</item>
-        <item name="colorPrimaryDark">@color/primary_dark</item>
-        <item name="colorAccent">@color/accent</item>
-        <item name="android:windowBackground">@color/background</item>
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Base Material 3 theme used app-wide. Light mode values; values-night/themes.xml
+         supplies the dark counterparts. -->
+    <style name="Theme.MiniBookLibrary" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/brand_primary</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorPrimaryContainer">#E5E6FE</item>
+        <item name="colorOnPrimaryContainer">@color/brand_primary_dark</item>
+
+        <item name="colorSecondary">@color/brand_secondary</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <item name="colorSecondaryContainer">#F2DCFB</item>
+        <item name="colorOnSecondaryContainer">#3B0F65</item>
+
+        <item name="colorTertiary">@color/brand_accent</item>
+        <item name="colorOnTertiary">@color/white</item>
+
+        <item name="colorError">@color/status_error</item>
+        <item name="colorOnError">@color/white</item>
+
+        <item name="android:colorBackground">@color/surface_dim</item>
+        <item name="colorSurface">@color/surface_light</item>
+        <item name="colorOnSurface">@color/text_primary_light</item>
+        <item name="colorOnSurfaceVariant">@color/text_secondary_light</item>
+        <item name="colorSurfaceVariant">@color/surface_subtle</item>
+        <item name="colorOutline">@color/divider_light</item>
+
+        <item name="android:statusBarColor" tools:targetApi="lollipop">@android:color/transparent</item>
+        <item name="android:windowDrawsSystemBarBackgrounds" tools:targetApi="lollipop">true</item>
+        <item name="android:navigationBarColor" tools:targetApi="lollipop">?attr/colorSurface</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
+
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textColorPrimary">@color/text_primary_light</item>
+        <item name="android:textColorSecondary">@color/text_secondary_light</item>
+
+        <item name="materialAlertDialogTheme">@style/AlertDialog.MiniBookLibrary</item>
+    </style>
+
+    <!-- Splash variant: launcher uses a subtly tinted window so the app doesn't flash white. -->
+    <style name="Theme.MiniBookLibrary.Splash" parent="Theme.MiniBookLibrary">
+        <item name="android:windowBackground">@drawable/bg_splash</item>
+    </style>
+
+    <style name="AlertDialog.MiniBookLibrary" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="dialogCornerRadius">24dp</item>
+    </style>
+
+    <!-- Reusable text styles -->
+    <style name="TextAppearance.MiniBookLibrary.Display" parent="TextAppearance.Material3.HeadlineSmall">
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textColor">?android:textColorPrimary</item>
+    </style>
+
+    <style name="TextAppearance.MiniBookLibrary.Title" parent="TextAppearance.Material3.TitleMedium">
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <style name="TextAppearance.MiniBookLibrary.Body" parent="TextAppearance.Material3.BodyMedium" />
+
+    <style name="TextAppearance.MiniBookLibrary.Caption" parent="TextAppearance.Material3.LabelSmall">
+        <item name="android:textColor">?android:textColorSecondary</item>
+    </style>
+
+    <style name="MiniCard" parent="Widget.Material3.CardView.Filled">
+        <item name="cardCornerRadius">20dp</item>
+        <item name="cardElevation">0dp</item>
+        <item name="strokeWidth">0dp</item>
+        <item name="cardBackgroundColor">?attr/colorSurface</item>
+    </style>
+
+    <style name="MiniCard.Outlined">
+        <item name="strokeWidth">1dp</item>
+        <item name="strokeColor">?attr/colorOutline</item>
     </style>
 </resources>
