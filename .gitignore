@@ -9,7 +9,14 @@
 /.idea/assetWizardSettings.xml
 .DS_Store
 /build
+**/build/
 /captures
 .externalNativeBuild
 .cxx
 local.properties
+
+
+# Common keystore files that should never be committed.
+*.jks
+*.keystore
+keystore.properties

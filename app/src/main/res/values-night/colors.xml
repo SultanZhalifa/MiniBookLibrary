@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Night-mode overrides — keep status chips legible on dark surfaces. -->
+    <color name="status_want_bg">#3B2A0E</color>
+    <color name="status_reading_bg">#0B2C4D</color>
+    <color name="status_finished_bg">#0B3D2C</color>
+</resources>
