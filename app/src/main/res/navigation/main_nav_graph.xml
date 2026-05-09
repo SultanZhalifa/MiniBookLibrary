@@ -54,7 +54,7 @@
         tools:layout="@layout/fragment_add_edit_book">
         <argument
             android:name="bookId"
-            android:defaultValue="0"
+            android:defaultValue="0L"
             app:argType="long" />
     </fragment>
 
