@@ -9,7 +9,16 @@
 /.idea/assetWizardSettings.xml
 .DS_Store
 /build
+**/build/
 /captures
 .externalNativeBuild
 .cxx
 local.properties
+
+# Claude Code session metadata — never commit.
+.claude/
+
+# Common keystore files that should never be committed.
+*.jks
+*.keystore
+keystore.properties
