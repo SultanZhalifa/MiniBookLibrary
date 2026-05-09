@@ -98,10 +98,20 @@ class UserRepository(
 
     private fun validate(username: String, email: String, password: String): ValidationResult {
         if (username.length < 3) return ValidationResult.Invalid("Username must be at least 3 characters")
-        if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+        if (email.isEmpty() || !EMAIL_PATTERN.matches(email)) {
             return ValidationResult.Invalid("Please enter a valid email address")
         }
         if (password.length < 6) return ValidationResult.Invalid("Password must be at least 6 characters")
         return ValidationResult.Valid
+    }
+
+    companion object {
+        // Pure-Kotlin email regex. Replaces android.util.Patterns.EMAIL_ADDRESS so JVM
+        // unit tests don't NPE on the static-field access (the Android stub jar leaves
+        // those fields null, and `isReturnDefaultValues` only handles methods).
+        // Practical RFC 5322-ish — good enough to bounce obvious typos at the form level.
+        private val EMAIL_PATTERN = Regex(
+            "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$"
+        )
     }
 }
