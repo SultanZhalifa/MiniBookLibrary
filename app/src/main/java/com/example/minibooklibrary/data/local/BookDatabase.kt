@@ -21,7 +21,10 @@ import com.example.minibooklibrary.data.local.entity.UserEntity
 @Database(
     entities = [UserEntity::class, BookEntity::class],
     version = 1,
-    exportSchema = true
+    // Schema export emits CI-time JSON snapshots to track migrations. Off for now to keep
+    // the build noise-free; flip on (and configure room.schemaLocation) when you need to
+    // ship a v2 schema with a Migration.
+    exportSchema = false
 )
 abstract class BookDatabase : RoomDatabase() {
 
