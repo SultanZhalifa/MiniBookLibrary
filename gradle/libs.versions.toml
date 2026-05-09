@@ -42,6 +42,7 @@ turbine = "1.2.0"
 roomTesting = "2.6.1"
 junitExt = "1.2.1"
 espresso = "3.6.1"
+orgJson = "20240303"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -80,6 +81,10 @@ androidx-arch-core-testing = { group = "androidx.arch.core", name = "core-testin
 turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitExt" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso" }
+
+# Reference org.json impl — Android ships it on-device but the unit test stub jar
+# leaves it stubbed-out, so we need a real impl on the test classpath.
+org-json = { group = "org.json", name = "json", version.ref = "orgJson" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
