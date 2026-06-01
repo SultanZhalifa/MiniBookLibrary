@@ -16,13 +16,16 @@ import com.example.minibooklibrary.data.local.entity.BookEntity
 import com.example.minibooklibrary.databinding.FragmentBookDetailBinding
 import com.example.minibooklibrary.domain.ReadingStatus
 import com.example.minibooklibrary.ui.common.ViewModelFactory
+import com.example.minibooklibrary.ui.widget.WidgetRefresher
 import com.example.minibooklibrary.util.formatDate
 import com.example.minibooklibrary.util.show
 import com.example.minibooklibrary.util.showIf
 import com.example.minibooklibrary.util.toast
+import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.launch
 import java.io.File
+import kotlin.math.abs
 
 class BookDetailFragment : Fragment() {
 
@@ -48,7 +51,14 @@ class BookDetailFragment : Fragment() {
         val bookId = arguments?.getLong("bookId", 0L) ?: 0L
         viewModel.load(bookId)
 
-        binding.btnBack.setOnClickListener { findNavController().popBackStack() }
+        binding.toolbar.setNavigationOnClickListener { findNavController().popBackStack() }
+        
+        // Handle toolbar title appearance on scroll
+        binding.appBar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
+            val isCollapsed = abs(verticalOffset) >= appBarLayout.totalScrollRange
+            binding.toolbar.title = if (isCollapsed) viewModel.state.value.book?.title else ""
+        })
+
         binding.btnEdit.setOnClickListener {
             findNavController().navigate(
                 R.id.action_detail_to_addEdit,
@@ -75,6 +85,7 @@ class BookDetailFragment : Fragment() {
                     when (event) {
                         DetailEvent.Deleted -> {
                             toast("Book deleted")
+                            WidgetRefresher.refresh(requireContext())
                             findNavController().popBackStack()
                         }
                     }
@@ -93,7 +104,7 @@ class BookDetailFragment : Fragment() {
         binding.statusChip.text = status.displayLabel
 
         binding.ratingValue.text = if (book.rating > 0f)
-            String.format("%.1f / 5", book.rating)
+            String.format("%.1f", book.rating)
         else getString(R.string.rating_unrated)
         binding.ratingBar.rating = book.rating
 
@@ -102,11 +113,7 @@ class BookDetailFragment : Fragment() {
         if (showProgress) {
             val pct = ((book.currentPage * 100f) / book.totalPages).coerceIn(0f, 100f).toInt()
             binding.progressBar.progress = pct
-            binding.progressLabel.text = getString(
-                R.string.detail_pages_format,
-                book.currentPage,
-                book.totalPages
-            )
+            binding.progressLabel.text = "Page ${book.currentPage} of ${book.totalPages} ($pct%)"
         }
 
         binding.notes.text = book.notes.ifBlank { getString(R.string.detail_no_notes) }
@@ -119,12 +126,8 @@ class BookDetailFragment : Fragment() {
                 placeholder(R.drawable.bg_cover_placeholder)
                 error(R.drawable.bg_cover_placeholder)
             }
-            binding.cover.background = null
-            binding.coverIcon.visibility = View.GONE
         } else {
-            binding.cover.setImageDrawable(null)
-            binding.cover.setBackgroundResource(R.drawable.bg_cover_placeholder)
-            binding.coverIcon.show()
+            binding.cover.setImageResource(R.drawable.bg_cover_placeholder)
         }
 
         binding.scrollContent.show()

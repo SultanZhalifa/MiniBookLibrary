@@ -56,7 +56,16 @@
             android:name="bookId"
             android:defaultValue="0L"
             app:argType="long" />
+        <action
+            android:id="@+id/action_addEdit_to_barcodeScanner"
+            app:destination="@id/barcodeScannerFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/barcodeScannerFragment"
+        android:name="com.example.minibooklibrary.ui.books.edit.BarcodeScannerFragment"
+        android:label="@string/scanner_title"
+        tools:layout="@layout/fragment_barcode_scanner" />
 
     <fragment
         android:id="@+id/settingsFragment"

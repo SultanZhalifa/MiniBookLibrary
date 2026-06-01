@@ -5,6 +5,10 @@
     <!-- ISBN auto-fill calls the Google Books JSON API over HTTPS. -->
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <!-- Barcode scanner for ISBN lookup. -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+
     <!-- Reading from gallery on Android 13+ uses the Photo Picker (no permission needed). -->
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"
         android:maxSdkVersion="34" />
@@ -47,9 +51,20 @@
 
         <activity
             android:name=".ui.main.MainActivity"
-            android:exported="false"
+            android:exported="true"
             android:theme="@style/Theme.MiniBookLibrary"
             android:windowSoftInputMode="adjustResize" />
+
+        <receiver
+            android:name=".ui.widget.CurrentlyReadingWidget"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_info" />
+        </receiver>
 
         <provider
             android:name="androidx.core.content.FileProvider"

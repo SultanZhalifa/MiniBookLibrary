@@ -47,4 +47,7 @@ interface BookDao {
 
     @Query("SELECT COUNT(*) FROM books WHERE userId = :userId AND readingStatus = :status")
     fun observeStatusCount(userId: Long, status: String): Flow<Int>
+
+    @Query("SELECT * FROM books WHERE userId = :userId AND readingStatus = 'currently_reading' ORDER BY lastModified DESC LIMIT 1")
+    suspend fun getCurrentlyReadingBook(userId: Long): BookEntity?
 }

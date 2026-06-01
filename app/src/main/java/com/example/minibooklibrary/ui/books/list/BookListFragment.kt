@@ -18,6 +18,7 @@ import com.example.minibooklibrary.databinding.FragmentBookListBinding
 import com.example.minibooklibrary.domain.SortOrder
 import com.example.minibooklibrary.domain.StatusFilter
 import com.example.minibooklibrary.ui.common.ViewModelFactory
+import com.example.minibooklibrary.ui.widget.WidgetRefresher
 import com.example.minibooklibrary.util.showIf
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
@@ -80,6 +81,7 @@ class BookListFragment : Fragment() {
                     val pos = viewHolder.bindingAdapterPosition
                     val book = adapter.currentList[pos]
                     viewModel.delete(book)
+                    WidgetRefresher.refresh(requireContext())
                     Snackbar.make(
                         binding.root,
                         getString(R.string.snackbar_book_deleted, book.title),

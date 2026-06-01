@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
 /**
@@ -46,16 +45,14 @@ class DashboardViewModel(
         bookRepository.observeStatusCount(userId, ReadingStatus.CURRENTLY_READING),
         bookRepository.observeStatusCount(userId, ReadingStatus.FINISHED)
     ) { books, recent, wantToRead, reading, finished ->
+        val ratedBooks = books.filter { it.rating > 0f }
         DashboardUiState(
             isLoading = false,
             totalBooks = books.size,
             wantToReadCount = wantToRead,
             currentlyReadingCount = reading,
             finishedCount = finished,
-            averageRating = books.filter { it.rating > 0f }
-                .map { it.rating }
-                .average()
-                .takeIf { !it.isNaN() }?.toFloat() ?: 0f,
+            averageRating = if (ratedBooks.isEmpty()) 0f else ratedBooks.map { it.rating }.average().toFloat(),
             recentBooks = recent,
             username = preferences.currentUsername.orEmpty()
         )
@@ -93,6 +90,3 @@ data class DashboardUiState(
     val finishedPercent: Int
         get() = if (totalBooks == 0) 0 else (finishedCount * 100 / totalBooks)
 }
-
-private fun List<Float>.average(): Double = if (isEmpty()) Double.NaN
-else sum() / size.toDouble()
