@@ -61,7 +61,12 @@
     <string name="addedit_isbn_lookup">Auto-fill</string>
     <string name="addedit_isbn_section">Quick add by ISBN</string>
     <string name="addedit_isbn_section_summary">Type an ISBN and we\'ll fetch the title, author, year, and page count from Google Books.</string>
-    <string name="addedit_isbn_lookup_success">Found “%1$s”. Double-check the details before saving.</string>
+    <string name="addedit_isbn_lookup_success">Found &quot;%1$s&quot;. Double-check the details before saving.</string>
+    <string name="addedit_scan_isbn">Scan</string>
+    <string name="scanner_title">Scan ISBN Barcode</string>
+    <string name="scanner_hint">Arahkan kamera ke barcode buku</string>
+    <string name="scanner_permission_denied">Izin kamera diperlukan untuk scan barcode</string>
+    <string name="scanner_no_isbn_found">Barcode bukan ISBN yang valid</string>
     <string name="addedit_field_title">Title</string>
     <string name="addedit_field_author">Author</string>
     <string name="addedit_field_year">Publication year</string>
@@ -135,6 +140,13 @@
 
     <string name="rating_unrated">Unrated</string>
     <string name="rating_format">%1$.1f stars</string>
+
+    <!-- Home-screen widget -->
+    <string name="widget_title">Currently Reading</string>
+    <string name="widget_no_book">No book in progress.\nOpen the app to start one.</string>
+    <string name="widget_not_logged_in">Sign in to Mini Book Library to see your reading progress.</string>
+    <string name="widget_page_progress">Page %1$d of %2$d</string>
+    <string name="widget_tap_to_open">Tap to open</string>
 
     <!-- Categories shown in the spinner. -->
     <string-array name="book_categories">

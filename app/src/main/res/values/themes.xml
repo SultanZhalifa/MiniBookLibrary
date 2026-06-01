@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Base Material 3 theme used app-wide. Light mode values; values-night/themes.xml
-         supplies the dark counterparts. -->
+    <!-- Base Material 3 theme used app-wide. -->
     <style name="Theme.MiniBookLibrary" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="colorPrimary">@color/brand_primary</item>
         <item name="colorOnPrimary">@color/white</item>
-        <item name="colorPrimaryContainer">#E5E6FE</item>
+        <item name="colorPrimaryContainer">@color/brand_primary_light</item>
         <item name="colorOnPrimaryContainer">@color/brand_primary_dark</item>
 
         <item name="colorSecondary">@color/brand_secondary</item>
         <item name="colorOnSecondary">@color/white</item>
-        <item name="colorSecondaryContainer">#F2DCFB</item>
-        <item name="colorOnSecondaryContainer">#3B0F65</item>
+        <item name="colorSecondaryContainer">#F3E8FF</item>
+        <item name="colorOnSecondaryContainer">#581C87</item>
 
         <item name="colorTertiary">@color/brand_accent</item>
         <item name="colorOnTertiary">@color/white</item>
@@ -38,42 +37,53 @@
         <item name="android:textColorSecondary">@color/text_secondary_light</item>
 
         <item name="materialAlertDialogTheme">@style/AlertDialog.MiniBookLibrary</item>
+        
+        <!-- Shape Appearance -->
+        <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.MiniBookLibrary.Medium</item>
+        <item name="shapeAppearanceLargeComponent">@style/ShapeAppearance.MiniBookLibrary.Large</item>
     </style>
 
-    <!-- Splash variant: launcher uses a subtly tinted window so the app doesn't flash white. -->
+    <style name="ShapeAppearance.MiniBookLibrary.Medium" parent="ShapeAppearance.Material3.MediumComponent">
+        <item name="cornerSize">20dp</item>
+    </style>
+
+    <style name="ShapeAppearance.MiniBookLibrary.Large" parent="ShapeAppearance.Material3.LargeComponent">
+        <item name="cornerSize">28dp</item>
+    </style>
+
     <style name="Theme.MiniBookLibrary.Splash" parent="Theme.MiniBookLibrary">
         <item name="android:windowBackground">@drawable/bg_splash</item>
     </style>
 
     <style name="AlertDialog.MiniBookLibrary" parent="ThemeOverlay.Material3.MaterialAlertDialog">
-        <item name="dialogCornerRadius">24dp</item>
+        <item name="dialogCornerRadius">28dp</item>
     </style>
 
-    <!-- Reusable text styles -->
-    <style name="TextAppearance.MiniBookLibrary.Display" parent="TextAppearance.Material3.HeadlineSmall">
+    <!-- Typography -->
+    <style name="TextAppearance.MiniBookLibrary.Display" parent="TextAppearance.Material3.HeadlineMedium">
+        <item name="android:fontFamily">sans-serif-black</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
+        <item name="android:letterSpacing">-0.02</item>
+    </style>
+
+    <style name="TextAppearance.MiniBookLibrary.Title" parent="TextAppearance.Material3.TitleLarge">
         <item name="android:fontFamily">sans-serif-medium</item>
-        <item name="android:textColor">?android:textColorPrimary</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
     </style>
 
-    <style name="TextAppearance.MiniBookLibrary.Title" parent="TextAppearance.Material3.TitleMedium">
-        <item name="android:fontFamily">sans-serif-medium</item>
+    <style name="TextAppearance.MiniBookLibrary.Body" parent="TextAppearance.Material3.BodyLarge">
+        <item name="android:textColor">?attr/colorOnSurface</item>
     </style>
 
-    <style name="TextAppearance.MiniBookLibrary.Body" parent="TextAppearance.Material3.BodyMedium" />
-
-    <style name="TextAppearance.MiniBookLibrary.Caption" parent="TextAppearance.Material3.LabelSmall">
-        <item name="android:textColor">?android:textColorSecondary</item>
+    <style name="TextAppearance.MiniBookLibrary.Caption" parent="TextAppearance.Material3.LabelMedium">
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+        <item name="android:letterSpacing">0.05</item>
     </style>
 
     <style name="MiniCard" parent="Widget.Material3.CardView.Filled">
-        <item name="cardCornerRadius">20dp</item>
+        <item name="cardCornerRadius">24dp</item>
         <item name="cardElevation">0dp</item>
-        <item name="strokeWidth">0dp</item>
         <item name="cardBackgroundColor">?attr/colorSurface</item>
     </style>
 
-    <style name="MiniCard.Outlined">
-        <item name="strokeWidth">1dp</item>
-        <item name="strokeColor">?attr/colorOutline</item>
-    </style>
 </resources>

@@ -4,12 +4,12 @@
     <style name="Theme.MiniBookLibrary" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="colorPrimary">#A5A8FF</item>
         <item name="colorOnPrimary">#1B1F66</item>
-        <item name="colorPrimaryContainer">#3B3FA0</item>
+        <item name="colorPrimaryContainer">#2E328A</item>
         <item name="colorOnPrimaryContainer">#E5E6FE</item>
 
         <item name="colorSecondary">#D8B4FE</item>
         <item name="colorOnSecondary">#3B0F65</item>
-        <item name="colorSecondaryContainer">#5C2D8E</item>
+        <item name="colorSecondaryContainer">#4C1D95</item>
         <item name="colorOnSecondaryContainer">#F2DCFB</item>
 
         <item name="colorTertiary">#F19CC2</item>
@@ -34,5 +34,9 @@
         <item name="android:textColorSecondary">@color/text_secondary_dark</item>
 
         <item name="materialAlertDialogTheme">@style/AlertDialog.MiniBookLibrary</item>
+
+        <!-- Shape Appearance -->
+        <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.MiniBookLibrary.Medium</item>
+        <item name="shapeAppearanceLargeComponent">@style/ShapeAppearance.MiniBookLibrary.Large</item>
     </style>
 </resources>

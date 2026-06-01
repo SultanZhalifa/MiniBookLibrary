@@ -9,7 +9,9 @@ import android.widget.ArrayAdapter
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
+import com.example.minibooklibrary.ui.widget.WidgetRefresher
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -72,6 +74,7 @@ class AddEditBookFragment : Fragment() {
         observeForm()
         observeValidation()
         observeEvents()
+        listenForScanResult()
     }
 
     private fun setupCategoryDropdown() {
@@ -108,7 +111,7 @@ class AddEditBookFragment : Fragment() {
     }
 
     private fun wireButtons() {
-        binding.btnBack.setOnClickListener { findNavController().popBackStack() }
+        binding.toolbar.setNavigationOnClickListener { findNavController().popBackStack() }
         binding.btnSave.setOnClickListener { viewModel.save() }
         binding.btnPickCover.setOnClickListener {
             pickCoverLauncher.launch(
@@ -122,6 +125,17 @@ class AddEditBookFragment : Fragment() {
         }
         binding.btnLookupIsbn.setOnClickListener {
             val isbn = binding.inputIsbn.text?.toString().orEmpty()
+            viewModel.lookupIsbn(isbn)
+        }
+        binding.btnScanIsbn.setOnClickListener {
+            findNavController().navigate(R.id.action_addEdit_to_barcodeScanner)
+        }
+    }
+
+    private fun listenForScanResult() {
+        setFragmentResultListener(BarcodeScannerFragment.REQUEST_KEY) { _, bundle ->
+            val isbn = bundle.getString(BarcodeScannerFragment.KEY_ISBN) ?: return@setFragmentResultListener
+            binding.inputIsbn.setText(isbn)
             viewModel.lookupIsbn(isbn)
         }
     }
@@ -203,6 +217,7 @@ class AddEditBookFragment : Fragment() {
                                     else R.string.snackbar_book_added
                                 )
                             )
+                            WidgetRefresher.refresh(requireContext())
                             findNavController().popBackStack()
                         }
                         is EditEvent.LookupSucceeded -> {

@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Brand palette: indigo / violet / pink gradient. Inspired by Material 3 dynamic
-         color but pinned so the design stays consistent across devices. -->
-    <color name="brand_primary">#5B5FE9</color>
-    <color name="brand_primary_dark">#3F44B8</color>
-    <color name="brand_primary_light">#7E82F0</color>
-    <color name="brand_secondary">#B86DEC</color>
-    <color name="brand_accent">#EC4FA0</color>
+    <!-- Modern Brand Palette -->
+    <color name="brand_primary">#6366F1</color>
+    <color name="brand_primary_dark">#4338CA</color>
+    <color name="brand_primary_light">#EEF2FF</color>
+    
+    <color name="brand_secondary">#A855F7</color>
+    <color name="brand_accent">#F43F5E</color>
 
-    <!-- Surface tints -->
+    <!-- Neutral Surfaces -->
     <color name="surface_light">#FFFFFF</color>
-    <color name="surface_dim">#F5F6FB</color>
-    <color name="surface_subtle">#EEF0F7</color>
+    <color name="surface_dim">#F8FAFC</color>
+    <color name="surface_subtle">#F1F5F9</color>
 
-    <color name="surface_dark">#101218</color>
-    <color name="surface_dark_elevated">#171A22</color>
-    <color name="surface_dark_subtle">#1F2330</color>
+    <color name="surface_dark">#0F172A</color>
+    <color name="surface_dark_elevated">#1E293B</color>
+    <color name="surface_dark_subtle">#334155</color>
 
-    <!-- Text -->
+    <!-- Text Palette -->
     <color name="text_primary_light">#0F172A</color>
     <color name="text_secondary_light">#475569</color>
     <color name="text_tertiary_light">#94A3B8</color>
@@ -26,25 +26,23 @@
     <color name="text_secondary_dark">#CBD5E1</color>
     <color name="text_tertiary_dark">#94A3B8</color>
 
-    <!-- Status colors -->
+    <!-- Status Colors -->
     <color name="status_want">#F59E0B</color>
     <color name="status_reading">#3B82F6</color>
     <color name="status_finished">#10B981</color>
     <color name="status_error">#EF4444</color>
 
-    <!-- Status chip backgrounds (low-saturation, work in light mode) -->
     <color name="status_want_bg">#FEF3C7</color>
     <color name="status_reading_bg">#DBEAFE</color>
     <color name="status_finished_bg">#D1FAE5</color>
 
-    <!-- Misc utility -->
     <color name="divider_light">#E2E8F0</color>
-    <color name="divider_dark">#2A2F3D</color>
+    <color name="divider_dark">#1E293B</color>
+    
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
 
-    <!-- Gradient stops used by drawables -->
-    <color name="gradient_start">#5B5FE9</color>
-    <color name="gradient_middle">#8651DF</color>
-    <color name="gradient_end">#EC4FA0</color>
+    <color name="gradient_start">#6366F1</color>
+    <color name="gradient_middle">#8B5CF6</color>
+    <color name="gradient_end">#D946EF</color>
 </resources>

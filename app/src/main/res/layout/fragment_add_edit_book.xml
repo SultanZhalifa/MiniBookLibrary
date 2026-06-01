@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -7,53 +7,50 @@
     android:layout_height="match_parent"
     android:background="?android:colorBackground">
 
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/toolbar"
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
+        android:layout_height="wrap_content"
         android:background="?android:colorBackground"
-        app:layout_constraintTop_toTopOf="parent"
-        app:title="@string/addedit_add_title"
-        app:titleTextColor="?android:textColorPrimary">
+        app:elevation="0dp">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnBack"
-            style="@style/Widget.Material3.Button.IconButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start"
-            app:icon="@drawable/ic_back"
-            app:iconTint="?android:textColorPrimary" />
-    </com.google.android.material.appbar.MaterialToolbar>
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:navigationIcon="@drawable/ic_back"
+            app:title="@string/addedit_add_title"
+            app:titleCentered="true" />
+
+    </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:fillViewport="true"
-        app:layout_constraintBottom_toTopOf="@id/btnSave"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingBottom="100dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="20dp">
+            android:padding="24dp">
 
-            <!-- Cover -->
-            <FrameLayout
+            <!-- Cover Section -->
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/coverFrame"
                 android:layout_width="160dp"
                 android:layout_height="220dp"
-                android:layout_gravity="center_horizontal">
+                android:layout_gravity="center_horizontal"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="4dp"
+                app:strokeWidth="0dp">
 
                 <ImageView
                     android:id="@+id/cover"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@drawable/bg_cover_placeholder"
-                    android:contentDescription="@null"
+                    android:background="?attr/colorSurfaceVariant"
                     android:scaleType="centerCrop" />
 
                 <ImageView
@@ -61,149 +58,152 @@
                     android:layout_width="64dp"
                     android:layout_height="64dp"
                     android:layout_gravity="center"
-                    android:contentDescription="@null"
+                    android:alpha="0.5"
                     android:src="@drawable/ic_book"
-                    app:tint="@color/white" />
-            </FrameLayout>
+                    app:tint="?attr/colorOnSurfaceVariant" />
+            </com.google.android.material.card.MaterialCardView>
 
-            <LinearLayout
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnPickCover"
+                style="@style/Widget.Material3.Button.TonalButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="12dp"
-                android:orientation="horizontal">
+                android:layout_marginTop="16dp"
+                android:text="@string/addedit_pick_cover"
+                app:cornerRadius="16dp"
+                app:icon="@drawable/ic_camera" />
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnPickCover"
-                    style="@style/Widget.Material3.Button.OutlinedButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/addedit_pick_cover"
-                    app:icon="@drawable/ic_camera" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnRemoveCover"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/addedit_remove_cover"
+                android:textColor="?attr/colorError"
+                android:visibility="gone" />
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnRemoveCover"
-                    style="@style/Widget.Material3.Button.TextButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:text="@string/addedit_remove_cover"
-                    android:textColor="?attr/colorError"
-                    android:visibility="gone" />
-            </LinearLayout>
-
-            <!-- ISBN auto-fill via Google Books -->
+            <!-- Smart Auto-fill Section -->
             <com.google.android.material.card.MaterialCardView
-                style="@style/MiniCard"
+                style="@style/Widget.Material3.CardView.Filled"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                app:cardCornerRadius="20dp"
-                app:cardElevation="0dp"
-                app:strokeColor="?attr/colorOutline"
-                app:strokeWidth="1dp">
+                android:layout_marginTop="32dp"
+                app:cardBackgroundColor="?attr/colorPrimaryContainer"
+                app:cardCornerRadius="24dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="14dp">
+                    android:padding="20dp">
 
                     <TextView
                         style="@style/TextAppearance.MiniBookLibrary.Title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/addedit_isbn_section"
-                        android:textSize="14sp" />
-
-                    <TextView
-                        style="@style/TextAppearance.MiniBookLibrary.Caption"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:text="@string/addedit_isbn_section_summary" />
+                        android:text="ISBN Auto-fill"
+                        android:textColor="?attr/colorOnPrimaryContainer" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:orientation="horizontal">
+                        android:layout_marginTop="16dp"
+                        android:gravity="center_vertical">
 
                         <com.google.android.material.textfield.TextInputLayout
                             android:id="@+id/tilIsbn"
-                            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                            style="@style/Widget.Material3.TextInputLayout.FilledBox"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:hint="@string/addedit_isbn_hint">
+                            app:boxCornerRadiusTopStart="12dp"
+                            app:boxCornerRadiusTopEnd="12dp"
+                            app:boxCornerRadiusBottomStart="12dp"
+                            app:boxCornerRadiusBottomEnd="12dp"
+                            app:boxStrokeWidth="0dp"
+                            app:boxStrokeWidthFocused="0dp"
+                            android:hint="Enter ISBN">
 
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/inputIsbn"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:imeOptions="actionDone"
-                                android:inputType="text"
-                                android:maxLength="17" />
+                                android:inputType="number"
+                                android:maxLength="13" />
                         </com.google.android.material.textfield.TextInputLayout>
 
                         <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnScanIsbn"
+                            style="@style/Widget.Material3.Button.IconButton.Filled"
+                            android:layout_width="56dp"
+                            android:layout_height="56dp"
+                            android:layout_marginStart="8dp"
+                            app:icon="@drawable/ic_barcode_scanner" />
+
+                        <com.google.android.material.button.MaterialButton
                             android:id="@+id/btnLookupIsbn"
+                            style="@style/Widget.Material3.Button"
                             android:layout_width="wrap_content"
                             android:layout_height="56dp"
                             android:layout_marginStart="8dp"
-                            android:text="@string/addedit_isbn_lookup"
-                            app:cornerRadius="14dp" />
+                            android:text="Fill" />
                     </LinearLayout>
 
                     <ProgressBar
                         android:id="@+id/lookupProgress"
+                        style="?android:attr/progressBarStyleSmall"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginTop="6dp"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="8dp"
                         android:visibility="gone" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Title -->
+            <!-- Book Information Form -->
+            <TextView
+                style="@style/TextAppearance.MiniBookLibrary.Title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:text="Book Details" />
+
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tilTitle"
                 style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="16dp"
+                app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Medium"
                 android:hint="@string/addedit_field_title">
-
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/inputTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:imeOptions="actionNext"
                     android:inputType="textCapSentences" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Author -->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tilAuthor"
                 style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="14dp"
+                android:layout_marginTop="16dp"
+                app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Medium"
                 android:hint="@string/addedit_field_author">
-
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/inputAuthor"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:imeOptions="actionNext"
                     android:inputType="textCapWords" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Category & Year on one row -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="14dp"
+                android:layout_marginTop="16dp"
                 android:orientation="horizontal">
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -211,10 +211,10 @@
                     style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:layout_marginEnd="8dp"
-                    android:layout_weight="1.4"
+                    app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Medium"
                     android:hint="@string/addedit_field_category">
-
                     <com.google.android.material.textfield.MaterialAutoCompleteTextView
                         android:id="@+id/inputCategory"
                         android:layout_width="match_parent"
@@ -227,28 +227,26 @@
                     style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    android:layout_weight="0.6"
+                    app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Medium"
                     android:hint="@string/addedit_field_year">
-
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/inputYear"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:imeOptions="actionNext"
                         android:inputType="number"
                         android:maxLength="4" />
                 </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
 
-            <!-- Reading status -->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tilStatus"
                 style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="14dp"
+                android:layout_marginTop="16dp"
+                app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Medium"
                 android:hint="@string/addedit_field_status">
-
                 <com.google.android.material.textfield.MaterialAutoCompleteTextView
                     android:id="@+id/inputStatus"
                     android:layout_width="match_parent"
@@ -256,11 +254,10 @@
                     android:inputType="none" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Reading progress (only visible for "Currently Reading") -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="14dp"
+                android:layout_marginTop="16dp"
                 android:orientation="horizontal">
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -268,16 +265,15 @@
                     style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
                     android:layout_weight="1"
-                    android:hint="@string/addedit_field_current_page"
-                    android:visibility="gone">
-
+                    android:layout_marginEnd="8dp"
+                    android:visibility="gone"
+                    app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Medium"
+                    android:hint="Page">
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/inputCurrentPage"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:imeOptions="actionNext"
                         android:inputType="number" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -287,43 +283,35 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:hint="@string/addedit_field_total_pages"
-                    android:visibility="gone">
-
+                    android:visibility="gone"
+                    app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Medium"
+                    android:hint="Total Pages">
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/inputTotalPages"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:imeOptions="actionNext"
                         android:inputType="number" />
                 </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
 
-            <!-- Rating -->
             <com.google.android.material.card.MaterialCardView
-                style="@style/MiniCard"
+                style="@style/Widget.Material3.CardView.Outlined"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="14dp"
-                app:cardCornerRadius="14dp"
-                app:cardElevation="0dp"
-                app:strokeColor="?attr/colorOutline"
-                app:strokeWidth="1dp">
+                android:layout_marginTop="16dp"
+                app:cardCornerRadius="16dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:padding="14dp">
-
+                    android:padding="16dp">
                     <TextView
-                        style="@style/TextAppearance.MiniBookLibrary.Body"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="@string/addedit_field_rating" />
-
+                        android:text="My Rating"
+                        android:fontFamily="sans-serif-medium" />
                     <RatingBar
                         android:id="@+id/ratingBar"
                         style="@style/Widget.AppCompat.RatingBar.Small"
@@ -334,38 +322,35 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Notes -->
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="14dp"
+                android:layout_marginTop="16dp"
+                app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Medium"
                 android:hint="@string/addedit_field_notes">
-
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/inputNotes"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="top"
-                    android:imeOptions="actionDone"
                     android:inputType="textMultiLine|textCapSentences"
-                    android:lines="4"
                     android:minHeight="120dp" />
             </com.google.android.material.textfield.TextInputLayout>
+
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnSave"
-        android:layout_width="0dp"
-        android:layout_height="56dp"
-        android:layout_margin="20dp"
+        style="@style/Widget.Material3.Button"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:layout_gravity="bottom"
+        android:layout_margin="24dp"
         android:text="@string/addedit_save"
-        android:textSize="16sp"
-        app:cornerRadius="16dp"
-        app:icon="@drawable/ic_save"
-        app:iconTint="@color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:textSize="18sp"
+        app:cornerRadius="20dp"
+        app:icon="@drawable/ic_save" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

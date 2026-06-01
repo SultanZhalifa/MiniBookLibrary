@@ -60,7 +60,7 @@ object ServiceLocator {
             googleBooksService ?: GoogleBooksService().also { googleBooksService = it }
         }
 
-    /** Test-only escape hatch: replace dependencies with fakes/mocks then reset between cases. */
+    /** Test-only escape hatch: swap in test-specific instances, reset between cases. */
     fun resetForTests(
         preferences: PreferencesManager? = null,
         userRepository: UserRepository? = null,
