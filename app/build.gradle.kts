@@ -63,6 +63,12 @@ android {
     }
 }
 
+ksp {
+    // Room writes one JSON snapshot per schema version here. They're committed to git and
+    // used by the migration tests, so never delete an old one.
+    arg("room.schemaLocation", "$projectDir/schemas")
+}
+
 dependencies {
     // AndroidX core
     implementation(libs.androidx.core.ktx)
