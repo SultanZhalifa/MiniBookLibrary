@@ -163,12 +163,14 @@ class BookListViewModelTest {
     }
 
     @Test
-    fun `restore re-adds previously deleted book`() = runTest(testDispatcher) {
+    fun `restore puts the deleted book back as-is`() = runTest(testDispatcher) {
         val vm = newVm()
         val target = book(99L, "Saved", ReadingStatus.FINISHED)
-        coEvery { repo.add(target) } returns 99L
+        coEvery { repo.restore(target) } returns 99L
         vm.restore(target)
         testDispatcher.scheduler.advanceUntilIdle()
-        coVerify { repo.add(target) }
+        // Not add(): that would re-stamp dateAdded and move the book to the top of the list.
+        coVerify { repo.restore(target) }
+        coVerify(exactly = 0) { repo.add(any()) }
     }
 }

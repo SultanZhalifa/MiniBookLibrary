@@ -2,6 +2,7 @@ package com.example.minibooklibrary.ui.auth
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import app.cash.turbine.test
+import com.example.minibooklibrary.R
 import com.example.minibooklibrary.data.repository.AuthResult
 import com.example.minibooklibrary.data.repository.UserRepository
 import io.mockk.coEvery
@@ -35,11 +36,24 @@ class AuthViewModelTest {
     private fun newVm() = AuthViewModel(userRepo)
 
     @Test
-    fun `mismatched passwords produce inline error`() = runTest(testDispatcher) {
+    fun `mismatched passwords produce an error on the confirm field`() = runTest(testDispatcher) {
         val vm = newVm()
         vm.register("alice", "alice@example.com", "abc123", "differs")
         testDispatcher.scheduler.advanceUntilIdle()
-        assertEquals("Passwords don't match", vm.uiState.value.errorMessage)
+        assertEquals(
+            AuthError(AuthField.CONFIRM_PASSWORD, R.string.auth_error_password_mismatch),
+            vm.uiState.value.error
+        )
+    }
+
+    @Test
+    fun `register validation errors land on the field they belong to`() = runTest(testDispatcher) {
+        coEvery { userRepo.register(any(), any(), any()) } returns
+            AuthResult.Failure(AuthResult.FailureReason.INVALID_EMAIL)
+        val vm = newVm()
+        vm.register("alice", "nope", "abc123", "abc123")
+        testDispatcher.scheduler.advanceUntilIdle()
+        assertEquals(AuthField.EMAIL, vm.uiState.value.error?.field)
     }
 
     @Test
@@ -60,25 +74,27 @@ class AuthViewModelTest {
     }
 
     @Test
-    fun `failed login surfaces error message`() = runTest(testDispatcher) {
+    fun `failed login surfaces a credentials error on the password field`() = runTest(testDispatcher) {
         coEvery { userRepo.login(any(), any()) } returns
-            AuthResult.Failure(AuthResult.FailureReason.INVALID_CREDENTIALS, "nope")
+            AuthResult.Failure(AuthResult.FailureReason.INVALID_CREDENTIALS)
         val vm = newVm()
         vm.login("alice", "wrong")
         testDispatcher.scheduler.advanceUntilIdle()
-        assertNotNull(vm.uiState.value.errorMessage)
-        assertEquals("nope", vm.uiState.value.errorMessage)
+        val error = vm.uiState.value.error
+        assertNotNull(error)
+        assertEquals(AuthField.PASSWORD, error!!.field)
+        assertEquals(R.string.auth_error_invalid_credentials, error.messageRes)
     }
 
     @Test
     fun `consumeError clears the error after the UI handles it`() = runTest(testDispatcher) {
         coEvery { userRepo.login(any(), any()) } returns
-            AuthResult.Failure(AuthResult.FailureReason.INVALID_CREDENTIALS, "nope")
+            AuthResult.Failure(AuthResult.FailureReason.INVALID_CREDENTIALS)
         val vm = newVm()
         vm.login("a", "b")
         testDispatcher.scheduler.advanceUntilIdle()
         vm.consumeError()
-        assertEquals(null, vm.uiState.value.errorMessage)
+        assertEquals(null, vm.uiState.value.error)
     }
 
     @Test

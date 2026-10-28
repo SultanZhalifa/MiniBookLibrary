@@ -188,7 +188,7 @@ class AddEditBookViewModelTest {
         coEvery { googleBooks.lookupByIsbn(any()) } returns null
         val vm = newVm()
         vm.events.test {
-            vm.lookupIsbn("9780000000000")
+            vm.lookupIsbn("9780306406157")
             testDispatcher.scheduler.advanceUntilIdle()
             val event = awaitItem()
             assertTrue(event is EditEvent.LookupFailed)
@@ -197,12 +197,14 @@ class AddEditBookViewModelTest {
     }
 
     @Test
-    fun `lookupIsbn rejects too-short input without hitting the network`() = runTest(testDispatcher) {
+    fun `lookupIsbn rejects invalid input without hitting the network`() = runTest(testDispatcher) {
         val vm = newVm()
         vm.events.test {
             vm.lookupIsbn("123")
-            val event = awaitItem()
-            assertTrue(event is EditEvent.LookupFailed)
+            assertTrue(awaitItem() is EditEvent.LookupFailed)
+            // Right length, wrong check digit.
+            vm.lookupIsbn("9780306406158")
+            assertTrue(awaitItem() is EditEvent.LookupFailed)
             cancelAndIgnoreRemainingEvents()
         }
         // Service must not have been called for an obviously invalid ISBN.
