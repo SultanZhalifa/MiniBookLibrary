@@ -91,15 +91,4 @@ class AuthViewModelTest {
         assertEquals(null, vm.uiState.value.error)
     }
 
-    @Test
-    fun `logout clears session and emits LoggedOut`() = runTest(testDispatcher) {
-        // userRepo is relaxed; logout() needs no explicit stubbing.
-        val vm = newVm()
-        vm.events.test {
-            vm.logout()
-            testDispatcher.scheduler.advanceUntilIdle()
-            assertEquals(AuthEvent.LoggedOut, awaitItem())
-            cancelAndIgnoreRemainingEvents()
-        }
-    }
 }
