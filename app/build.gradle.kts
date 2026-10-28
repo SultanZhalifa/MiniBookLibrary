@@ -63,9 +63,11 @@ android {
         }
     }
 
-    // The migration test reads the committed schema snapshots as assets.
+    // The Robolectric migration test reads the committed schema snapshots as assets. Unit
+    // tests see the tested variant's merged assets (not the test source set's), so they go
+    // on debug. Release builds don't include them.
     sourceSets {
-        getByName("test").assets.srcDir("$projectDir/schemas")
+        getByName("debug").assets.srcDir("$projectDir/schemas")
     }
 }
 
