@@ -13,10 +13,13 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.example.minibooklibrary.BuildConfig
 import com.example.minibooklibrary.R
 import com.example.minibooklibrary.databinding.FragmentSettingsBinding
 import com.example.minibooklibrary.ui.common.ViewModelFactory
 import com.example.minibooklibrary.ui.main.MainActivity
+import com.example.minibooklibrary.ui.widget.WidgetRefresher
+import com.example.minibooklibrary.util.applySystemBarInsets
 import com.example.minibooklibrary.util.toast
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
@@ -38,6 +41,20 @@ class SettingsFragment : Fragment() {
         if (uri != null) viewModel.importBackup(requireContext(), uri)
     }
 
+    // The system save dialog picks the destination, so exports work on every API level
+    // without WRITE_EXTERNAL_STORAGE (which the old Downloads path needed below API 29).
+    private val createPdfLauncher = registerForActivityResult(
+        ActivityResultContracts.CreateDocument(SettingsViewModel.MIME_PDF)
+    ) { uri: Uri? ->
+        if (uri != null) viewModel.exportPdf(requireContext(), uri)
+    }
+
+    private val createBackupLauncher = registerForActivityResult(
+        ActivityResultContracts.CreateDocument(SettingsViewModel.MIME_JSON)
+    ) { uri: Uri? ->
+        if (uri != null) viewModel.exportBackup(requireContext(), uri)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -49,6 +66,7 @@ class SettingsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.header.applySystemBarInsets(top = true)
 
         // Theme toggle group: maps Material's chip ids to AppCompatDelegate constants.
         binding.themeToggle.addOnButtonCheckedListener { _, checkedId, isChecked ->
@@ -66,21 +84,24 @@ class SettingsFragment : Fragment() {
             title.setText(R.string.settings_export_pdf)
             summary.setText(R.string.settings_export_pdf_summary)
             icon.setImageResource(R.drawable.ic_pdf)
-            root.setOnClickListener { viewModel.exportPdf(requireContext()) }
+            root.setOnClickListener { createPdfLauncher.launch(viewModel.suggestedFileName("pdf")) }
         }
         with(binding.rowBackup) {
             title.setText(R.string.settings_backup)
             summary.setText(R.string.settings_backup_summary)
             icon.setImageResource(R.drawable.ic_backup)
-            root.setOnClickListener { viewModel.exportBackup(requireContext()) }
+            root.setOnClickListener {
+                createBackupLauncher.launch(viewModel.suggestedFileName("json", prefix = "MiniBookLibrary_backup"))
+            }
         }
         with(binding.rowRestore) {
             title.setText(R.string.settings_restore)
             summary.setText(R.string.settings_restore_summary)
             icon.setImageResource(R.drawable.ic_restore)
-            root.setOnClickListener { pickRestoreLauncher.launch(arrayOf("application/json")) }
+            root.setOnClickListener { pickRestoreLauncher.launch(RESTORE_MIME_TYPES) }
         }
         binding.btnLogout.setOnClickListener { confirmLogout() }
+        binding.aboutFooter.text = getString(R.string.settings_about_footer, BuildConfig.VERSION_NAME)
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -105,30 +126,30 @@ class SettingsFragment : Fragment() {
         }
         binding.signedInAs.text = getString(
             R.string.settings_signed_in_as,
-            state.username.ifEmpty { "you" }
+            state.username.ifEmpty { getString(R.string.settings_signed_in_fallback) }
         )
         binding.progress.visibility = if (state.isWorking) View.VISIBLE else View.GONE
     }
 
     private fun handleEvent(event: SettingsEvent) {
         when (event) {
-            is SettingsEvent.PdfReady -> {
-                Snackbar.make(binding.root, R.string.snackbar_pdf_exported, Snackbar.LENGTH_LONG)
-                    .setAction(R.string.action_open) { openFile(event.uri, "application/pdf") }
-                    .show()
-            }
-            is SettingsEvent.BackupReady -> {
-                Snackbar.make(binding.root, R.string.snackbar_backup_exported, Snackbar.LENGTH_LONG)
-                    .setAction(R.string.action_open) { openFile(event.uri, "application/json") }
+            is SettingsEvent.Exported -> {
+                Snackbar.make(binding.root, event.messageRes, Snackbar.LENGTH_LONG)
+                    .setAction(R.string.action_open) { openFile(event.uri, event.mimeType) }
                     .show()
             }
             is SettingsEvent.RestoreCompleted -> {
-                toast(getString(R.string.snackbar_restore_done, event.importedCount))
+                WidgetRefresher.refresh(requireContext())
+                toast(
+                    resources.getQuantityString(
+                        R.plurals.snackbar_restore_done, event.importedCount, event.importedCount
+                    )
+                )
             }
-            is SettingsEvent.Error -> {
-                toast(event.message)
-            }
+            is SettingsEvent.Error -> toast(event.messageRes)
             SettingsEvent.LoggedOut -> {
+                // The widget would otherwise keep showing the signed-out user's book.
+                WidgetRefresher.refresh(requireContext())
                 (activity as? MainActivity)?.routeBackToAuth()
             }
         }
@@ -139,7 +160,7 @@ class SettingsFragment : Fragment() {
             setDataAndType(uri, mime)
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         }
-        runCatching { startActivity(intent) }.onFailure { toast("No app can open this file") }
+        runCatching { startActivity(intent) }.onFailure { toast(R.string.settings_no_app_to_open) }
     }
 
     private fun confirmLogout() {
@@ -154,5 +175,10 @@ class SettingsFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private companion object {
+        // Plenty of file managers report .json as octet-stream; without it the backup is greyed out.
+        val RESTORE_MIME_TYPES = arrayOf(SettingsViewModel.MIME_JSON, "application/octet-stream")
     }
 }

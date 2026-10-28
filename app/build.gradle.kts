@@ -8,14 +8,15 @@ plugins {
 
 android {
     namespace = "com.example.minibooklibrary"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.example.minibooklibrary"
-        minSdk = 21
-        targetSdk = 34
-        versionCode = 2
-        versionName = "2.0"
+        // 26 for PBKDF2WithHmacSHA256 (password hashing) and java.time (reading stats).
+        minSdk = 26
+        targetSdk = 36
+        versionCode = 3
+        versionName = "2.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
@@ -61,6 +62,11 @@ android {
             isReturnDefaultValues = true
         }
     }
+
+    // The migration test reads the committed schema snapshots as assets.
+    sourceSets {
+        getByName("test").assets.srcDir("$projectDir/schemas")
+    }
 }
 
 ksp {
@@ -102,6 +108,8 @@ dependencies {
 
     // Coil for image loading
     implementation(libs.coil)
+    // EXIF orientation when downscaling picked covers
+    implementation(libs.androidx.exifinterface)
 
     // CameraX
     implementation(libs.androidx.camera.camera2)
@@ -119,6 +127,10 @@ dependencies {
     testImplementation(libs.turbine)
     testImplementation(libs.androidx.room.testing)
     testImplementation(libs.org.json)
+    // Robolectric only for the Room migration test, which needs a real SQLite.
+    testImplementation(libs.robolectric)
+    testImplementation(libs.androidx.test.core)
+    testImplementation(libs.androidx.junit)
 
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

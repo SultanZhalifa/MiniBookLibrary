@@ -8,6 +8,7 @@
     android:background="?android:colorBackground">
 
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?android:colorBackground"
@@ -24,6 +25,7 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/scroll"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
@@ -103,7 +105,7 @@
                         style="@style/TextAppearance.MiniBookLibrary.Title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="ISBN Auto-fill"
+                        android:text="@string/addedit_isbn_section"
                         android:textColor="?attr/colorOnPrimaryContainer" />
 
                     <LinearLayout
@@ -124,7 +126,7 @@
                             app:boxCornerRadiusBottomEnd="12dp"
                             app:boxStrokeWidth="0dp"
                             app:boxStrokeWidthFocused="0dp"
-                            android:hint="Enter ISBN">
+                            android:hint="@string/addedit_isbn_hint">
 
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/inputIsbn"
@@ -140,6 +142,7 @@
                             android:layout_width="56dp"
                             android:layout_height="56dp"
                             android:layout_marginStart="8dp"
+                            android:contentDescription="@string/addedit_scan_isbn"
                             app:icon="@drawable/ic_barcode_scanner" />
 
                         <com.google.android.material.button.MaterialButton
@@ -148,7 +151,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="56dp"
                             android:layout_marginStart="8dp"
-                            android:text="Fill" />
+                            android:text="@string/addedit_isbn_lookup" />
                     </LinearLayout>
 
                     <ProgressBar
@@ -168,7 +171,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="32dp"
-                android:text="Book Details" />
+                android:text="@string/addedit_details_section" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tilTitle"
@@ -269,7 +272,7 @@
                     android:layout_marginEnd="8dp"
                     android:visibility="gone"
                     app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Medium"
-                    android:hint="Page">
+                    android:hint="@string/addedit_field_current_page">
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/inputCurrentPage"
                         android:layout_width="match_parent"
@@ -285,7 +288,7 @@
                     android:layout_weight="1"
                     android:visibility="gone"
                     app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Medium"
-                    android:hint="Total Pages">
+                    android:hint="@string/addedit_field_total_pages">
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/inputTotalPages"
                         android:layout_width="match_parent"
@@ -310,7 +313,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="My Rating"
+                        android:text="@string/addedit_field_rating"
                         android:fontFamily="sans-serif-medium" />
                     <RatingBar
                         android:id="@+id/ratingBar"

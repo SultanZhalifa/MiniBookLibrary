@@ -18,6 +18,9 @@ interface UserDao {
     @Query("SELECT * FROM users WHERE id = :id LIMIT 1")
     suspend fun findById(id: Long): UserEntity?
 
+    @Query("UPDATE users SET passwordHash = :hash, passwordSalt = :salt WHERE id = :id")
+    suspend fun updatePassword(id: Long, hash: String, salt: String)
+
     @Query("SELECT COUNT(*) FROM users WHERE username = :username")
     suspend fun countByUsername(username: String): Int
 }

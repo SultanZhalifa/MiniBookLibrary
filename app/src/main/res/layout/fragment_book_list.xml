@@ -20,6 +20,7 @@
             app:titleEnabled="false">
 
             <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/header"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingHorizontal="24dp"
@@ -64,6 +65,7 @@
                         style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
+                        android:contentDescription="@string/library_sort_title"
                         app:icon="@drawable/ic_sort"
                         app:iconSize="24dp" />
 
@@ -73,6 +75,7 @@
                         android:layout_width="48dp"
                         android:layout_height="48dp"
                         android:layout_marginStart="8dp"
+                        android:contentDescription="@string/library_filter_title"
                         app:icon="@drawable/ic_filter"
                         app:iconSize="24dp" />
                 </LinearLayout>

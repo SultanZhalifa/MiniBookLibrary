@@ -5,11 +5,11 @@ package com.example.minibooklibrary.domain
  *
  * [ALL] is the no-op identity filter — it returns every book regardless of status.
  */
-enum class StatusFilter(val storageValue: String, val displayLabel: String) {
-    ALL("all", "All Books"),
-    WANT_TO_READ("want_to_read", "Want to Read"),
-    CURRENTLY_READING("currently_reading", "Currently Reading"),
-    FINISHED("finished", "Finished");
+enum class StatusFilter(val storageValue: String) {
+    ALL("all"),
+    WANT_TO_READ("want_to_read"),
+    CURRENTLY_READING("currently_reading"),
+    FINISHED("finished");
 
     companion object {
         fun fromStorageValue(value: String?): StatusFilter =

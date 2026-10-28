@@ -13,12 +13,15 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.minibooklibrary.R
 import com.example.minibooklibrary.databinding.FragmentBookListBinding
 import com.example.minibooklibrary.domain.SortOrder
 import com.example.minibooklibrary.domain.StatusFilter
 import com.example.minibooklibrary.ui.common.ViewModelFactory
 import com.example.minibooklibrary.ui.widget.WidgetRefresher
+import com.example.minibooklibrary.util.applySystemBarInsets
+import com.example.minibooklibrary.util.labelRes
 import com.example.minibooklibrary.util.showIf
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
@@ -49,6 +52,7 @@ class BookListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.header.applySystemBarInsets(top = true)
 
         adapter = BookAdapter(BookAdapter.LayoutVariant.VERTICAL) { book ->
             findNavController().navigate(
@@ -79,15 +83,27 @@ class BookListFragment : Fragment() {
                     direction: Int
                 ) {
                     val pos = viewHolder.bindingAdapterPosition
+                    // A second swipe can land while the list is mid-diff.
+                    if (pos == RecyclerView.NO_POSITION) return
                     val book = adapter.currentList[pos]
+                    val appContext = requireContext().applicationContext
                     viewModel.delete(book)
-                    WidgetRefresher.refresh(requireContext())
+                    WidgetRefresher.refresh(appContext)
                     Snackbar.make(
                         binding.root,
                         getString(R.string.snackbar_book_deleted, book.title),
                         Snackbar.LENGTH_LONG
                     )
-                        .setAction(R.string.action_undo) { viewModel.restore(book) }
+                        .setAction(R.string.action_undo) {
+                            viewModel.restore(book)
+                            WidgetRefresher.refresh(appContext)
+                        }
+                        .addCallback(object : Snackbar.Callback() {
+                            override fun onDismissed(bar: Snackbar, event: Int) {
+                                // The cover file is kept until Undo is no longer possible.
+                                if (event != DISMISS_EVENT_ACTION) viewModel.discardCover(book)
+                            }
+                        })
                         .show()
                 }
             }
@@ -148,9 +164,9 @@ class BookListFragment : Fragment() {
     private fun showSortMenu() {
         val options = SortOrder.entries.toTypedArray()
         val current = viewModel.sortOrder.value
-        val labels = options.map { it.displayLabel }.toTypedArray()
+        val labels = options.map { getString(it.labelRes) }.toTypedArray()
         MaterialAlertDialogBuilder(requireContext())
-            .setTitle("Sort by")
+            .setTitle(R.string.library_sort_title)
             .setSingleChoiceItems(labels, options.indexOf(current)) { dialog, which ->
                 viewModel.setSortOrder(options[which])
                 dialog.dismiss()
@@ -162,9 +178,9 @@ class BookListFragment : Fragment() {
     private fun showFilterMenu() {
         val options = StatusFilter.entries.toTypedArray()
         val current = viewModel.statusFilter.value
-        val labels = options.map { it.displayLabel }.toTypedArray()
+        val labels = options.map { getString(it.labelRes) }.toTypedArray()
         MaterialAlertDialogBuilder(requireContext())
-            .setTitle("Filter by status")
+            .setTitle(R.string.library_filter_title)
             .setSingleChoiceItems(labels, options.indexOf(current)) { dialog, which ->
                 viewModel.setStatusFilter(options[which])
                 dialog.dismiss()

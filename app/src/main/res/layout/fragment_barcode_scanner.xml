@@ -76,6 +76,7 @@
 
     <!-- Top Bar -->
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/topBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="16dp"
@@ -87,6 +88,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:backgroundTint="#33FFFFFF"
+            android:contentDescription="@string/action_close"
             app:icon="@drawable/ic_back"
             app:iconTint="@android:color/white"
             app:layout_constraintStart_toStartOf="parent"

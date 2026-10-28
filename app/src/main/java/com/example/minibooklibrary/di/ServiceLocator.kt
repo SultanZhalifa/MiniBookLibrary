@@ -51,8 +51,9 @@ object ServiceLocator {
 
     fun provideBookRepository(context: Context): BookRepository =
         bookRepository ?: synchronized(this) {
-            bookRepository ?: BookRepository(provideDatabase(context).bookDao())
-                .also { bookRepository = it }
+            bookRepository ?: provideDatabase(context).let { db ->
+                BookRepository(db.bookDao(), db.readingLogDao())
+            }.also { bookRepository = it }
         }
 
     fun provideGoogleBooksService(): GoogleBooksService =

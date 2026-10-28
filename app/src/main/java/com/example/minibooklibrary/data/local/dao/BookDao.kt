@@ -33,20 +33,14 @@ interface BookDao {
     @Query("SELECT * FROM books WHERE id = :id LIMIT 1")
     suspend fun findById(id: Long): BookEntity?
 
+    @Query("SELECT * FROM books WHERE id = :id LIMIT 1")
+    fun observeById(id: Long): Flow<BookEntity?>
+
     @Query("SELECT * FROM books WHERE userId = :userId ORDER BY dateAdded DESC")
     fun observeAllForUser(userId: Long): Flow<List<BookEntity>>
 
     @Query("SELECT * FROM books WHERE userId = :userId ORDER BY dateAdded DESC")
     suspend fun getAllForUser(userId: Long): List<BookEntity>
-
-    @Query("SELECT * FROM books WHERE userId = :userId ORDER BY dateAdded DESC LIMIT :limit")
-    fun observeRecentForUser(userId: Long, limit: Int): Flow<List<BookEntity>>
-
-    @Query("SELECT COUNT(*) FROM books WHERE userId = :userId")
-    fun observeBookCount(userId: Long): Flow<Int>
-
-    @Query("SELECT COUNT(*) FROM books WHERE userId = :userId AND readingStatus = :status")
-    fun observeStatusCount(userId: Long, status: String): Flow<Int>
 
     @Query("SELECT * FROM books WHERE userId = :userId AND readingStatus = 'currently_reading' ORDER BY lastModified DESC LIMIT 1")
     suspend fun getCurrentlyReadingBook(userId: Long): BookEntity?

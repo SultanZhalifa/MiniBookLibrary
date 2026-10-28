@@ -1,12 +1,15 @@
 package com.example.minibooklibrary.ui
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.example.minibooklibrary.di.ServiceLocator
 import com.example.minibooklibrary.ui.auth.AuthActivity
 import com.example.minibooklibrary.ui.main.MainActivity
 import com.example.minibooklibrary.ui.onboarding.OnboardingActivity
+import kotlinx.coroutines.launch
 
 /**
  * Front-door activity that decides whether the user should land on Onboarding, Auth, or
@@ -20,12 +23,18 @@ class RouterActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val prefs = ServiceLocator.providePreferences(this)
-        val target = when {
-            !prefs.onboardingCompleted -> OnboardingActivity::class.java
-            !prefs.isLoggedIn -> AuthActivity::class.java
-            else -> MainActivity::class.java
+        if (!ServiceLocator.providePreferences(this).onboardingCompleted) {
+            open(OnboardingActivity::class.java)
+            return
         }
+        // One indexed lookup; the splash theme covers it.
+        lifecycleScope.launch {
+            val signedIn = ServiceLocator.provideUserRepository(this@RouterActivity).validateSession()
+            open(if (signedIn) MainActivity::class.java else AuthActivity::class.java)
+        }
+    }
+
+    private fun open(target: Class<out Activity>) {
         startActivity(Intent(this, target))
         finish()
     }

@@ -24,19 +24,12 @@ class UserRepository(
             val cleanedUsername = username.trim()
             val cleanedEmail = email.trim()
 
-            when (val validation = validate(cleanedUsername, cleanedEmail, password)) {
-                is ValidationResult.Invalid -> return@withContext AuthResult.Failure(
-                    AuthResult.FailureReason.VALIDATION,
-                    validation.message
-                )
-                ValidationResult.Valid -> Unit
+            validate(cleanedUsername, cleanedEmail, password)?.let { reason ->
+                return@withContext AuthResult.Failure(reason)
             }
 
             if (userDao.countByUsername(cleanedUsername) > 0) {
-                return@withContext AuthResult.Failure(
-                    AuthResult.FailureReason.USERNAME_TAKEN,
-                    "That username is already taken"
-                )
+                return@withContext AuthResult.Failure(AuthResult.FailureReason.USERNAME_TAKEN)
             }
 
             val salt = PasswordHasher.newSalt()
@@ -57,27 +50,22 @@ class UserRepository(
         withContext(Dispatchers.IO) {
             val cleaned = username.trim()
             if (cleaned.isEmpty() || password.isEmpty()) {
-                return@withContext AuthResult.Failure(
-                    AuthResult.FailureReason.VALIDATION,
-                    "Username and password are required"
-                )
+                return@withContext AuthResult.Failure(AuthResult.FailureReason.MISSING_FIELDS)
             }
             val user = userDao.findByUsername(cleaned)
-                ?: return@withContext AuthResult.Failure(
-                    AuthResult.FailureReason.INVALID_CREDENTIALS,
-                    "Invalid username or password"
-                )
-            val ok = PasswordHasher.verify(password, user.passwordSalt, user.passwordHash)
-            if (!ok) {
-                AuthResult.Failure(
-                    AuthResult.FailureReason.INVALID_CREDENTIALS,
-                    "Invalid username or password"
-                )
-            } else {
-                preferences.currentUserId = user.id
-                preferences.currentUsername = user.username
-                AuthResult.Success(user.id, user.username)
+                ?: return@withContext AuthResult.Failure(AuthResult.FailureReason.INVALID_CREDENTIALS)
+            if (!PasswordHasher.verify(password, user.passwordSalt, user.passwordHash)) {
+                return@withContext AuthResult.Failure(AuthResult.FailureReason.INVALID_CREDENTIALS)
             }
+            // Accounts created before the PBKDF2 switch get upgraded the first time we see
+            // the plaintext again. There's no other moment we can do it.
+            if (PasswordHasher.needsRehash(user.passwordHash)) {
+                val salt = PasswordHasher.newSalt()
+                userDao.updatePassword(user.id, PasswordHasher.hash(password, salt), salt)
+            }
+            preferences.currentUserId = user.id
+            preferences.currentUsername = user.username
+            AuthResult.Success(user.id, user.username)
         }
 
     /** Drop session info — does not delete the account, just signs out. */
@@ -91,19 +79,25 @@ class UserRepository(
         if (id <= 0L) null else userDao.findById(id)
     }
 
-    private sealed class ValidationResult {
-        data object Valid : ValidationResult()
-        data class Invalid(val message: String) : ValidationResult()
+    /**
+     * True when the persisted session points at a user that still exists. Prefs and the
+     * database can drift apart (cleared storage, a partial Auto Backup restore); without
+     * this check the app would open the library and crash on the first foreign-key insert.
+     */
+    suspend fun validateSession(): Boolean {
+        if (!preferences.isLoggedIn) return false
+        if (currentUser() != null) return true
+        preferences.clearSession()
+        return false
     }
 
-    private fun validate(username: String, email: String, password: String): ValidationResult {
-        if (username.length < 3) return ValidationResult.Invalid("Username must be at least 3 characters")
-        if (email.isEmpty() || !EMAIL_PATTERN.matches(email)) {
-            return ValidationResult.Invalid("Please enter a valid email address")
+    private fun validate(username: String, email: String, password: String): AuthResult.FailureReason? =
+        when {
+            username.length < 3 -> AuthResult.FailureReason.USERNAME_TOO_SHORT
+            !EMAIL_PATTERN.matches(email) -> AuthResult.FailureReason.INVALID_EMAIL
+            password.length < 6 -> AuthResult.FailureReason.PASSWORD_TOO_SHORT
+            else -> null
         }
-        if (password.length < 6) return ValidationResult.Invalid("Password must be at least 6 characters")
-        return ValidationResult.Valid
-    }
 
     companion object {
         // Pure-Kotlin email regex. Replaces android.util.Patterns.EMAIL_ADDRESS so JVM

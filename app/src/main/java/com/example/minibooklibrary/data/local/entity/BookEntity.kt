@@ -15,6 +15,9 @@ import com.example.minibooklibrary.domain.ReadingStatus
  *
  * [readingStatus] is stored as a string ([ReadingStatus.storageValue]) rather than the
  * enum ordinal — see the docs on [ReadingStatus] for why.
+ *
+ * [finishedAt] is set when the status moves to Finished and cleared if it moves away
+ * again. Added in schema v2; books finished before that have null.
  */
 @Entity(
     tableName = "books",
@@ -42,5 +45,6 @@ data class BookEntity(
     val totalPages: Int = 0,
     val notes: String = "",
     val dateAdded: Long = System.currentTimeMillis(),
-    val lastModified: Long = System.currentTimeMillis()
+    val lastModified: Long = System.currentTimeMillis(),
+    val finishedAt: Long? = null
 )
