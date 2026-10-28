@@ -44,6 +44,16 @@ jobs:
       - name: Assemble debug APK
         run: ./gradlew assembleDebug --stacktrace
 
+      # KSP regenerates app/schemas on every build. If that left a diff, an entity changed
+      # without its snapshot being committed, and the migration test can't cover it.
+      - name: Check Room schemas are committed
+        run: |
+          if [ -n "$(git status --porcelain app/schemas)" ]; then
+            echo "::error::Room schema changed. Commit the new JSON from the room-schemas artifact."
+            git status --porcelain app/schemas
+            exit 1
+          fi
+
       - name: Upload Room schemas
         if: always()
         uses: actions/upload-artifact@v4
