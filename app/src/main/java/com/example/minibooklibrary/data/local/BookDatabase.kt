@@ -24,8 +24,8 @@ import com.example.minibooklibrary.data.local.entity.UserEntity
  * crash in testing, not silently wipe someone's library on upgrade. `BookDatabaseMigrationTest`
  * opens every old version and migrates it forward.
  *
- * The pre-Room SQLite DB ([DATABASE_LEGACY_NAME]) is abandoned rather than migrated; it
- * lived in a different namespace and Backup/Restore covers anyone who needs that data.
+ * The pre-Room SQLite DB (`BookLibrary.db`, from the original Java version) is abandoned
+ * rather than migrated; Backup/Restore covers anyone who needs that data.
  */
 @Database(
     entities = [UserEntity::class, BookEntity::class, ReadingLogEntity::class],
@@ -41,9 +41,6 @@ abstract class BookDatabase : RoomDatabase() {
 
     companion object {
         const val DATABASE_NAME = "mini_book_library.db"
-
-        @Suppress("unused")
-        const val DATABASE_LEGACY_NAME = "BookLibrary.db"
 
         @Volatile
         private var INSTANCE: BookDatabase? = null

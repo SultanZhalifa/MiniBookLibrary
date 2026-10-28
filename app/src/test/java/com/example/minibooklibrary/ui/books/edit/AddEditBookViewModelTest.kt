@@ -1,6 +1,5 @@
 package com.example.minibooklibrary.ui.books.edit
 
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import app.cash.turbine.test
 import com.example.minibooklibrary.data.local.entity.BookEntity
 import com.example.minibooklibrary.data.preferences.PreferencesManager
@@ -24,15 +23,11 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
 import java.util.Calendar
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class AddEditBookViewModelTest {
-
-    @get:Rule
-    val instantExecutor = InstantTaskExecutorRule()
 
     private val testDispatcher = StandardTestDispatcher()
     @Before fun setUp() = Dispatchers.setMain(testDispatcher)

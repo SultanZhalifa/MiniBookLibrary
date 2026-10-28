@@ -1,12 +1,10 @@
 package com.example.minibooklibrary.ui.auth
 
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import app.cash.turbine.test
 import com.example.minibooklibrary.R
 import com.example.minibooklibrary.data.repository.AuthResult
 import com.example.minibooklibrary.data.repository.UserRepository
 import io.mockk.coEvery
-import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -19,14 +17,10 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class AuthViewModelTest {
-
-    @get:Rule
-    val instantExecutor = InstantTaskExecutorRule()
 
     private val testDispatcher = StandardTestDispatcher()
     @Before fun setUp() = Dispatchers.setMain(testDispatcher)

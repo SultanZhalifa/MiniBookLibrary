@@ -17,10 +17,10 @@ import com.example.minibooklibrary.BuildConfig
 import com.example.minibooklibrary.R
 import com.example.minibooklibrary.databinding.FragmentSettingsBinding
 import com.example.minibooklibrary.ui.common.ViewModelFactory
+import com.example.minibooklibrary.ui.common.applySystemBarInsets
+import com.example.minibooklibrary.ui.common.toast
 import com.example.minibooklibrary.ui.main.MainActivity
 import com.example.minibooklibrary.ui.widget.WidgetRefresher
-import com.example.minibooklibrary.util.applySystemBarInsets
-import com.example.minibooklibrary.util.toast
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch

@@ -7,11 +7,14 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.minibooklibrary.R
+import com.example.minibooklibrary.data.backup.BackupManager
+import com.example.minibooklibrary.data.export.PdfExporter
 import com.example.minibooklibrary.data.preferences.PreferencesManager
 import com.example.minibooklibrary.data.repository.BookRepository
 import com.example.minibooklibrary.data.repository.UserRepository
-import com.example.minibooklibrary.util.BackupManager
-import com.example.minibooklibrary.util.PdfExporter
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -22,9 +25,6 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 /**
  * Settings tab ViewModel. Owns theme switching, PDF export, JSON backup/restore, and

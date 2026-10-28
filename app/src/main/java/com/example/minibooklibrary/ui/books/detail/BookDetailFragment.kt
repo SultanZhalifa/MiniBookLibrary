@@ -11,6 +11,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import coil.load
 import com.example.minibooklibrary.R
 import com.example.minibooklibrary.data.local.entity.BookEntity
@@ -18,24 +19,26 @@ import com.example.minibooklibrary.databinding.DialogUpdateProgressBinding
 import com.example.minibooklibrary.databinding.FragmentBookDetailBinding
 import com.example.minibooklibrary.domain.ReadingStatus
 import com.example.minibooklibrary.ui.common.ViewModelFactory
+import com.example.minibooklibrary.ui.common.applySystemBarMargins
+import com.example.minibooklibrary.ui.common.labelRes
+import com.example.minibooklibrary.ui.common.show
+import com.example.minibooklibrary.ui.common.showIf
+import com.example.minibooklibrary.ui.common.toast
 import com.example.minibooklibrary.ui.widget.WidgetRefresher
-import com.example.minibooklibrary.util.applySystemBarMargins
 import com.example.minibooklibrary.util.formatDate
-import com.example.minibooklibrary.util.labelRes
-import com.example.minibooklibrary.util.show
-import com.example.minibooklibrary.util.showIf
-import com.example.minibooklibrary.util.toast
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import kotlinx.coroutines.launch
 import java.io.File
 import java.util.Locale
 import kotlin.math.abs
+import kotlinx.coroutines.launch
 
 class BookDetailFragment : Fragment() {
 
     private var _binding: FragmentBookDetailBinding? = null
     private val binding get() = _binding!!
+
+    private val args: BookDetailFragmentArgs by navArgs()
 
     private val viewModel: BookDetailViewModel by viewModels {
         ViewModelFactory(requireContext())
@@ -53,14 +56,14 @@ class BookDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val bookId = arguments?.getLong("bookId", 0L) ?: 0L
+        val bookId = args.bookId
         viewModel.load(bookId)
 
         binding.toolbar.setNavigationOnClickListener { findNavController().popBackStack() }
         binding.toolbar.applySystemBarMargins(top = true)
         binding.btnEdit.applySystemBarMargins(bottom = true)
         binding.bottomActions.applySystemBarMargins(bottom = true)
-        
+
         // Handle toolbar title appearance on scroll
         binding.appBar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
             val isCollapsed = abs(verticalOffset) >= appBarLayout.totalScrollRange
@@ -68,10 +71,7 @@ class BookDetailFragment : Fragment() {
         })
 
         binding.btnEdit.setOnClickListener {
-            findNavController().navigate(
-                R.id.action_detail_to_addEdit,
-                Bundle().apply { putLong("bookId", bookId) }
-            )
+            findNavController().navigate(BookDetailFragmentDirections.actionDetailToAddEdit(bookId))
         }
         binding.btnDelete.setOnClickListener { confirmDelete() }
         binding.btnShare.setOnClickListener { share() }

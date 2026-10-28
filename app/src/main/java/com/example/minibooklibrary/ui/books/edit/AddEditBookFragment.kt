@@ -11,27 +11,28 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
-import com.example.minibooklibrary.ui.widget.WidgetRefresher
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import coil.load
 import com.example.minibooklibrary.R
+import com.example.minibooklibrary.data.local.ImageStorage
 import com.example.minibooklibrary.databinding.FragmentAddEditBookBinding
 import com.example.minibooklibrary.domain.ReadingStatus
 import com.example.minibooklibrary.ui.common.ViewModelFactory
-import com.example.minibooklibrary.util.ImageStorage
-import com.example.minibooklibrary.util.applySystemBarInsets
-import com.example.minibooklibrary.util.applySystemBarMargins
-import com.example.minibooklibrary.util.labelRes
-import com.example.minibooklibrary.util.show
-import com.example.minibooklibrary.util.showIf
-import com.example.minibooklibrary.util.toast
+import com.example.minibooklibrary.ui.common.applySystemBarInsets
+import com.example.minibooklibrary.ui.common.applySystemBarMargins
+import com.example.minibooklibrary.ui.common.labelRes
+import com.example.minibooklibrary.ui.common.show
+import com.example.minibooklibrary.ui.common.showIf
+import com.example.minibooklibrary.ui.common.toast
+import com.example.minibooklibrary.ui.widget.WidgetRefresher
+import java.io.File
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.File
 
 /**
  * Add a new book or edit an existing one. The form's stored state lives in
@@ -41,6 +42,9 @@ class AddEditBookFragment : Fragment() {
 
     private var _binding: FragmentAddEditBookBinding? = null
     private val binding get() = _binding!!
+
+    /** bookId 0 means "add a new book". */
+    private val args: AddEditBookFragmentArgs by navArgs()
 
     private val viewModel: AddEditBookViewModel by viewModels {
         ViewModelFactory(requireContext())
@@ -69,8 +73,7 @@ class AddEditBookFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val bookId = arguments?.getLong("bookId", 0L) ?: 0L
-        if (bookId > 0L) viewModel.loadForEdit(bookId)
+        if (args.bookId > 0L) viewModel.loadForEdit(args.bookId)
 
         // Bottom nav is hidden here, so this screen owns the bottom inset.
         binding.appBar.applySystemBarInsets(top = true)
@@ -138,7 +141,7 @@ class AddEditBookFragment : Fragment() {
             viewModel.lookupIsbn(isbn)
         }
         binding.btnScanIsbn.setOnClickListener {
-            findNavController().navigate(R.id.action_addEdit_to_barcodeScanner)
+            findNavController().navigate(AddEditBookFragmentDirections.actionAddEditToBarcodeScanner())
         }
     }
 

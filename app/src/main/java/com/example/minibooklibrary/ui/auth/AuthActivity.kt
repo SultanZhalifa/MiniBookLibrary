@@ -10,8 +10,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.minibooklibrary.databinding.ActivityAuthBinding
 import com.example.minibooklibrary.ui.common.ViewModelFactory
+import com.example.minibooklibrary.ui.common.applySystemBarInsets
 import com.example.minibooklibrary.ui.main.MainActivity
-import com.example.minibooklibrary.util.applySystemBarInsets
 import kotlinx.coroutines.launch
 
 /**

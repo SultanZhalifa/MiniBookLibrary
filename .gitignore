@@ -9,8 +9,6 @@
 /captures
 .externalNativeBuild
 .cxx
-local.properties
-
 
 # Common keystore files that should never be committed.
 *.jks

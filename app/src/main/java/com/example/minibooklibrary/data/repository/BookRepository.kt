@@ -48,6 +48,11 @@ class BookRepository(
         readingLogDao.getDailyPages(userId)
     }
 
+    /** The most recently updated book marked Currently Reading, for the home-screen widget. */
+    suspend fun getCurrentlyReading(userId: Long): BookEntity? = withContext(Dispatchers.IO) {
+        bookDao.getCurrentlyReadingBook(userId)
+    }
+
     suspend fun findById(id: Long): BookEntity? = withContext(Dispatchers.IO) {
         bookDao.findById(id)
     }

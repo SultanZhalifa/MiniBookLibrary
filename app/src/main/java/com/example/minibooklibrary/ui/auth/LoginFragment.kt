@@ -55,7 +55,7 @@ class LoginFragment : Fragment() {
         }
 
         binding.btnGoRegister.setOnClickListener {
-            findNavController().navigate(R.id.action_login_to_register)
+            findNavController().navigate(LoginFragmentDirections.actionLoginToRegister())
         }
 
         viewLifecycleOwner.lifecycleScope.launch {

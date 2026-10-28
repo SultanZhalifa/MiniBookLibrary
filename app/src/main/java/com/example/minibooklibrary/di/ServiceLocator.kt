@@ -60,20 +60,4 @@ object ServiceLocator {
         googleBooksService ?: synchronized(this) {
             googleBooksService ?: GoogleBooksService().also { googleBooksService = it }
         }
-
-    /** Test-only escape hatch: swap in test-specific instances, reset between cases. */
-    fun resetForTests(
-        preferences: PreferencesManager? = null,
-        userRepository: UserRepository? = null,
-        bookRepository: BookRepository? = null,
-        googleBooksService: GoogleBooksService? = null
-    ) {
-        synchronized(this) {
-            this.preferences = preferences
-            this.userRepository = userRepository
-            this.bookRepository = bookRepository
-            this.googleBooksService = googleBooksService
-            this.database = null
-        }
-    }
 }

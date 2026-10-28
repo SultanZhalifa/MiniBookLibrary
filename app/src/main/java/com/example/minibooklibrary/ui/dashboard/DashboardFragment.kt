@@ -20,13 +20,13 @@ import com.example.minibooklibrary.R
 import com.example.minibooklibrary.databinding.FragmentDashboardBinding
 import com.example.minibooklibrary.ui.books.list.BookAdapter
 import com.example.minibooklibrary.ui.common.ViewModelFactory
-import com.example.minibooklibrary.util.applySystemBarInsets
-import com.example.minibooklibrary.util.show
-import com.example.minibooklibrary.util.showIf
-import kotlinx.coroutines.launch
+import com.example.minibooklibrary.ui.common.applySystemBarInsets
+import com.example.minibooklibrary.ui.common.show
+import com.example.minibooklibrary.ui.common.showIf
 import java.time.LocalDate
 import java.time.format.TextStyle
 import java.util.Locale
+import kotlinx.coroutines.launch
 
 /**
  * Home tab. Shows greeting, totals card, status breakdown, recently added books, and a
@@ -56,10 +56,7 @@ class DashboardFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.header.applySystemBarInsets(top = true)
         recentAdapter = BookAdapter(BookAdapter.LayoutVariant.HORIZONTAL) { book ->
-            findNavController().navigate(
-                R.id.action_dashboard_to_detail,
-                Bundle().apply { putLong("bookId", book.id) }
-            )
+            findNavController().navigate(DashboardFragmentDirections.actionDashboardToDetail(book.id))
         }
         binding.recyclerRecent.apply {
             layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
@@ -67,13 +64,10 @@ class DashboardFragment : Fragment() {
         }
 
         binding.btnAddBook.setOnClickListener {
-            findNavController().navigate(
-                R.id.action_dashboard_to_addEdit,
-                Bundle().apply { putLong("bookId", 0L) }
-            )
+            findNavController().navigate(DashboardFragmentDirections.actionDashboardToAddEdit())
         }
         binding.btnViewAll.setOnClickListener {
-            findNavController().navigate(R.id.action_dashboard_to_library)
+            findNavController().navigate(DashboardFragmentDirections.actionDashboardToLibrary())
         }
 
         viewLifecycleOwner.lifecycleScope.launch {

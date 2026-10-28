@@ -12,6 +12,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.minibooklibrary.R
@@ -19,10 +20,10 @@ import com.example.minibooklibrary.databinding.FragmentBookListBinding
 import com.example.minibooklibrary.domain.SortOrder
 import com.example.minibooklibrary.domain.StatusFilter
 import com.example.minibooklibrary.ui.common.ViewModelFactory
+import com.example.minibooklibrary.ui.common.applySystemBarInsets
+import com.example.minibooklibrary.ui.common.labelRes
+import com.example.minibooklibrary.ui.common.showIf
 import com.example.minibooklibrary.ui.widget.WidgetRefresher
-import com.example.minibooklibrary.util.applySystemBarInsets
-import com.example.minibooklibrary.util.labelRes
-import com.example.minibooklibrary.util.showIf
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
@@ -55,10 +56,7 @@ class BookListFragment : Fragment() {
         binding.header.applySystemBarInsets(top = true)
 
         adapter = BookAdapter(BookAdapter.LayoutVariant.VERTICAL) { book ->
-            findNavController().navigate(
-                R.id.action_library_to_detail,
-                Bundle().apply { putLong("bookId", book.id) }
-            )
+            findNavController().navigate(BookListFragmentDirections.actionLibraryToDetail(book.id))
         }
         binding.recycler.apply {
             layoutManager = LinearLayoutManager(requireContext())
@@ -67,19 +65,19 @@ class BookListFragment : Fragment() {
 
         // Swipe-to-delete with undo via Snackbar — repository delete is fire-and-forget
         // because Room's reactive flow re-emits the post-delete state.
-        val touchHelper = androidx.recyclerview.widget.ItemTouchHelper(
-            object : androidx.recyclerview.widget.ItemTouchHelper.SimpleCallback(
+        val touchHelper = ItemTouchHelper(
+            object : ItemTouchHelper.SimpleCallback(
                 0,
-                androidx.recyclerview.widget.ItemTouchHelper.LEFT or androidx.recyclerview.widget.ItemTouchHelper.RIGHT
+                ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
             ) {
                 override fun onMove(
-                    recyclerView: androidx.recyclerview.widget.RecyclerView,
-                    viewHolder: androidx.recyclerview.widget.RecyclerView.ViewHolder,
-                    target: androidx.recyclerview.widget.RecyclerView.ViewHolder
+                    recyclerView: RecyclerView,
+                    viewHolder: RecyclerView.ViewHolder,
+                    target: RecyclerView.ViewHolder
                 ) = false
 
                 override fun onSwiped(
-                    viewHolder: androidx.recyclerview.widget.RecyclerView.ViewHolder,
+                    viewHolder: RecyclerView.ViewHolder,
                     direction: Int
                 ) {
                     val pos = viewHolder.bindingAdapterPosition
@@ -111,10 +109,7 @@ class BookListFragment : Fragment() {
         touchHelper.attachToRecyclerView(binding.recycler)
 
         binding.fabAdd.setOnClickListener {
-            findNavController().navigate(
-                R.id.action_library_to_addEdit,
-                Bundle().apply { putLong("bookId", 0L) }
-            )
+            findNavController().navigate(BookListFragmentDirections.actionLibraryToAddEdit())
         }
 
         binding.btnSort.setOnClickListener { showSortMenu() }
@@ -131,10 +126,7 @@ class BookListFragment : Fragment() {
         })
 
         binding.btnEmptyAdd.setOnClickListener {
-            findNavController().navigate(
-                R.id.action_library_to_addEdit,
-                Bundle().apply { putLong("bookId", 0L) }
-            )
+            findNavController().navigate(BookListFragmentDirections.actionLibraryToAddEdit())
         }
 
         viewLifecycleOwner.lifecycleScope.launch {

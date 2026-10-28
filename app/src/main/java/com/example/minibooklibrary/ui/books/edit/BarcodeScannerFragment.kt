@@ -18,9 +18,9 @@ import androidx.fragment.app.setFragmentResult
 import androidx.navigation.fragment.findNavController
 import com.example.minibooklibrary.R
 import com.example.minibooklibrary.databinding.FragmentBarcodeScannerBinding
+import com.example.minibooklibrary.ui.common.applySystemBarInsets
+import com.example.minibooklibrary.ui.common.toast
 import com.example.minibooklibrary.util.Isbn
-import com.example.minibooklibrary.util.applySystemBarInsets
-import com.example.minibooklibrary.util.toast
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage

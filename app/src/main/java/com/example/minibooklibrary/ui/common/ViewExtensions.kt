@@ -1,7 +1,6 @@
-package com.example.minibooklibrary.util
+package com.example.minibooklibrary.ui.common
 
 import android.content.Context
-import android.text.format.DateUtils
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
@@ -11,13 +10,6 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
-import com.example.minibooklibrary.R
-import com.example.minibooklibrary.domain.ReadingStatus
-import com.example.minibooklibrary.domain.SortOrder
-import com.example.minibooklibrary.domain.StatusFilter
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 /** Show a short toast — the most common shape across the app. */
 fun Context.toast(message: CharSequence) {
@@ -33,8 +25,6 @@ fun Fragment.toast(@StringRes message: Int) {
 }
 
 fun View.show() { visibility = View.VISIBLE }
-fun View.hide() { visibility = View.GONE }
-fun View.invisible() { visibility = View.INVISIBLE }
 fun View.showIf(condition: Boolean) {
     visibility = if (condition) View.VISIBLE else View.GONE
 }
@@ -83,46 +73,3 @@ fun View.applySystemBarMargins(top: Boolean = false, bottom: Boolean = false) {
         insets
     }
 }
-
-/** Format epoch milliseconds as a friendly absolute date — used in book detail / PDF. */
-fun Long.formatDate(pattern: String = "MMM d, yyyy"): String =
-    SimpleDateFormat(pattern, Locale.getDefault()).format(Date(this))
-
-/** Format epoch milliseconds as a relative string ("3 hours ago") for activity rails. */
-fun Long.formatRelative(): String =
-    DateUtils.getRelativeTimeSpanString(
-        this,
-        System.currentTimeMillis(),
-        DateUtils.MINUTE_IN_MILLIS
-    ).toString()
-
-// User-facing labels for the domain enums. They live here rather than on the enums so
-// the domain package stays free of Android resources and the labels can be translated.
-
-@get:StringRes
-val ReadingStatus.labelRes: Int
-    get() = when (this) {
-        ReadingStatus.WANT_TO_READ -> R.string.status_want_to_read
-        ReadingStatus.CURRENTLY_READING -> R.string.status_currently_reading
-        ReadingStatus.FINISHED -> R.string.status_finished
-    }
-
-@get:StringRes
-val SortOrder.labelRes: Int
-    get() = when (this) {
-        SortOrder.DATE_ADDED_DESC -> R.string.sort_newest
-        SortOrder.DATE_ADDED_ASC -> R.string.sort_oldest
-        SortOrder.TITLE_ASC -> R.string.sort_title_asc
-        SortOrder.TITLE_DESC -> R.string.sort_title_desc
-        SortOrder.RATING_DESC -> R.string.sort_rating_desc
-        SortOrder.RATING_ASC -> R.string.sort_rating_asc
-    }
-
-@get:StringRes
-val StatusFilter.labelRes: Int
-    get() = when (this) {
-        StatusFilter.ALL -> R.string.filter_all
-        StatusFilter.WANT_TO_READ -> R.string.status_want_to_read
-        StatusFilter.CURRENTLY_READING -> R.string.status_currently_reading
-        StatusFilter.FINISHED -> R.string.status_finished
-    }

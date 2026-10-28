@@ -54,10 +54,6 @@ class PreferencesManager(context: Context) {
         get() = StatusFilter.fromStorageValue(prefs.getString(KEY_STATUS_FILTER, null))
         set(value) = prefs.edit { putString(KEY_STATUS_FILTER, value.storageValue) }
 
-    var lastCategoryFilter: String?
-        get() = prefs.getString(KEY_CATEGORY_FILTER, null)
-        set(value) = prefs.edit { putString(KEY_CATEGORY_FILTER, value) }
-
     /**
      * Clear session-scoped state on logout but preserve onboarding/theme — the user
      * shouldn't have to re-do those after signing out.
@@ -78,6 +74,5 @@ class PreferencesManager(context: Context) {
         private const val KEY_THEME_MODE = "theme_mode"
         private const val KEY_SORT_ORDER = "sort_order"
         private const val KEY_STATUS_FILTER = "status_filter"
-        private const val KEY_CATEGORY_FILTER = "category_filter"
     }
 }

@@ -13,7 +13,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.minibooklibrary.R
 import com.example.minibooklibrary.databinding.FragmentRegisterBinding
 import com.example.minibooklibrary.ui.common.ViewModelFactory
-import com.example.minibooklibrary.util.toast
+import com.example.minibooklibrary.ui.common.toast
 import kotlinx.coroutines.launch
 
 class RegisterFragment : Fragment() {

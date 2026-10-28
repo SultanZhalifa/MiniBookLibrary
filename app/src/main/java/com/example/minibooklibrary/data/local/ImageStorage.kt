@@ -1,4 +1,4 @@
-package com.example.minibooklibrary.util
+package com.example.minibooklibrary.data.local
 
 import android.content.Context
 import android.graphics.Bitmap

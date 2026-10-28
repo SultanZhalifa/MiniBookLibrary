@@ -8,15 +8,15 @@ import android.content.Intent
 import android.view.View
 import android.widget.RemoteViews
 import com.example.minibooklibrary.R
+import com.example.minibooklibrary.data.local.ImageStorage
 import com.example.minibooklibrary.data.local.entity.BookEntity
 import com.example.minibooklibrary.di.ServiceLocator
 import com.example.minibooklibrary.ui.RouterActivity
-import com.example.minibooklibrary.util.ImageStorage
+import java.io.File
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
-import java.io.File
 
 /**
  * Home-screen widget showing the book most recently touched while "Currently Reading".
@@ -82,8 +82,8 @@ class CurrentlyReadingWidget : AppWidgetProvider() {
                 return
             }
 
-            val dao = ServiceLocator.provideDatabase(context).bookDao()
-            val book = dao.getCurrentlyReadingBook(prefs.currentUserId)
+            val book = ServiceLocator.provideBookRepository(context)
+                .getCurrentlyReading(prefs.currentUserId)
 
             if (book == null) {
                 showEmpty(views, context.getString(R.string.widget_no_book))

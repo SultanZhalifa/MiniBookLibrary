@@ -2,9 +2,9 @@ package com.example.minibooklibrary.ui.books.detail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.minibooklibrary.data.local.ImageStorage
 import com.example.minibooklibrary.data.local.entity.BookEntity
 import com.example.minibooklibrary.data.repository.BookRepository
-import com.example.minibooklibrary.util.ImageStorage
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow

@@ -13,7 +13,7 @@ import com.example.minibooklibrary.R
 import com.example.minibooklibrary.databinding.ActivityOnboardingBinding
 import com.example.minibooklibrary.di.ServiceLocator
 import com.example.minibooklibrary.ui.auth.AuthActivity
-import com.example.minibooklibrary.util.applySystemBarInsets
+import com.example.minibooklibrary.ui.common.applySystemBarInsets
 
 /**
  * 3-slide onboarding shown only on the first launch. The "completed" flag is flipped

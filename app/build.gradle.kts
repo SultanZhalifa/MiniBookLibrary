@@ -1,7 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.ksp)
     alias(libs.plugins.navigation.safeargs)
 }
@@ -17,9 +16,6 @@ android {
         targetSdk = 36
         versionCode = 3
         versionName = "2.1"
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables.useSupportLibrary = true
     }
 
     buildFeatures {
@@ -78,7 +74,6 @@ ksp {
 }
 
 dependencies {
-    // AndroidX core
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.activity.ktx)
@@ -86,55 +81,37 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.recyclerview)
     implementation(libs.androidx.viewpager2)
-    implementation(libs.androidx.swiperefreshlayout)
-    implementation(libs.androidx.preference.ktx)
     implementation(libs.material)
 
-    // Lifecycle (ViewModel + LiveData)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
-    implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
-
-    // Coroutines
     implementation(libs.kotlinx.coroutines.android)
-    implementation(libs.kotlinx.coroutines.core)
 
-    // Room
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
 
-    // Navigation
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
 
-    // Coil for image loading
+    // Covers: loading, plus EXIF orientation when downscaling a picked photo.
     implementation(libs.coil)
-    // EXIF orientation when downscaling picked covers
     implementation(libs.androidx.exifinterface)
 
-    // CameraX
+    // ISBN barcode scanner.
     implementation(libs.androidx.camera.camera2)
     implementation(libs.androidx.camera.lifecycle)
     implementation(libs.androidx.camera.view)
-
-    // ML Kit Barcode Scanning (bundled)
     implementation(libs.mlkit.barcode.scanning)
 
-    // Unit testing
     testImplementation(libs.junit)
     testImplementation(libs.mockk)
     testImplementation(libs.kotlinx.coroutines.test)
-    testImplementation(libs.androidx.arch.core.testing)
     testImplementation(libs.turbine)
-    testImplementation(libs.androidx.room.testing)
     testImplementation(libs.org.json)
-    // Robolectric only for the Room migration test, which needs a real SQLite.
+    // Robolectric + room-testing only for the migration test, which needs a real SQLite.
     testImplementation(libs.robolectric)
+    testImplementation(libs.androidx.room.testing)
     testImplementation(libs.androidx.test.core)
-    testImplementation(libs.androidx.junit)
-
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(libs.mockk.android)
+    testImplementation(libs.androidx.test.junit)
 }

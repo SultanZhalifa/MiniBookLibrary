@@ -11,9 +11,9 @@ import com.example.minibooklibrary.data.local.entity.BookEntity
 import com.example.minibooklibrary.databinding.ItemBookHorizontalBinding
 import com.example.minibooklibrary.databinding.ItemBookVerticalBinding
 import com.example.minibooklibrary.domain.ReadingStatus
-import com.example.minibooklibrary.util.labelRes
-import com.example.minibooklibrary.util.show
-import com.example.minibooklibrary.util.showIf
+import com.example.minibooklibrary.ui.common.labelRes
+import com.example.minibooklibrary.ui.common.show
+import com.example.minibooklibrary.ui.common.showIf
 import java.io.File
 import java.util.Locale
 

@@ -10,7 +10,7 @@ import com.example.minibooklibrary.domain.ReadingStatus
  * A single book in a user's personal library.
  *
  * [coverImageUri] is a string-encoded `content://` or `file://` URI managed by
- * [com.example.minibooklibrary.util.ImageStorage] — the actual file lives in app-private
+ * [com.example.minibooklibrary.data.local.ImageStorage] — the actual file lives in app-private
  * internal storage so it survives backup/restore cleanly.
  *
  * [readingStatus] is stored as a string ([ReadingStatus.storageValue]) rather than the

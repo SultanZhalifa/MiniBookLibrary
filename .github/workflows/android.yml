@@ -44,6 +44,10 @@ jobs:
       - name: Assemble debug APK
         run: ./gradlew assembleDebug --stacktrace
 
+      # Unsigned, but runs R8 with the real shrinker rules so a missing keep rule fails here.
+      - name: Assemble release (R8 check)
+        run: ./gradlew assembleRelease --stacktrace
+
       # KSP regenerates app/schemas on every build. If that left a diff, an entity changed
       # without its snapshot being committed, and the migration test can't cover it.
       - name: Check Room schemas are committed

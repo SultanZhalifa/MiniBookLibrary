@@ -117,7 +117,7 @@ A few things worth calling out:
 app/src/main/java/com/example/minibooklibrary/
   MiniBookLibraryApp.kt           Application class, applies persisted theme on startup
   di/ServiceLocator.kt            Hand-rolled DI container
-  domain/
+  domain/                         Plain Kotlin, no Android imports
     ReadingStatus.kt              Want / Reading / Finished
     SortOrder.kt                  Sort options
     StatusFilter.kt               Library filter
@@ -125,32 +125,32 @@ app/src/main/java/com/example/minibooklibrary/
     ReadingStats.kt               Streak and weekly pages, computed from the reading log
   data/
     local/
-      BookDatabase.kt             Room database singleton
-      dao/{User, Book, ReadingLog}Dao   Suspend functions + Flow reads
-      entity/{User, Book, ReadingLog}   @Entity tables
-    preferences/PreferencesManager.kt   Typed SharedPreferences wrapper
-    remote/GoogleBooksService.kt        Google Books client + parser
-    repository/{User, Book}Repository   Suspend writes, reactive reads
+      BookDatabase.kt             Room database singleton (schema history in the KDoc)
+      ImageStorage.kt             Downscales picked covers into internal storage
+      dao/                        UserDao, BookDao, ReadingLogDao
+      entity/                     UserEntity, BookEntity, ReadingLogEntity
+    preferences/                  Typed SharedPreferences wrapper
+    remote/                       Google Books client + parser
+    repository/                   UserRepository, BookRepository: suspend writes, Flow reads
+    backup/                       JSON backup I/O (BackupManager) and file format (BackupJson)
+    export/                       PdfDocument-based PDF exporter
   ui/
     RouterActivity.kt             Decides where the launcher should go
     onboarding/                   ViewPager2 onboarding
     auth/                         Login + Register fragments
     main/MainActivity.kt          Bottom-nav host
     dashboard/                    Home screen
-    books/{list, detail, edit}    Library, detail, add/edit
+    books/{list, detail, edit}    Library, detail, add/edit, barcode scanner
     settings/                     Theme, backup/restore, PDF export
     widget/                       Currently Reading home-screen widget
-    common/ViewModelFactory.kt    Builds ViewModels from the ServiceLocator
-  util/
-    PasswordHasher.kt             PBKDF2, with a fallback that verifies (and upgrades) v1 hashes
-    Isbn.kt                       ISBN-10/13 normalization and checksum
-    ImageStorage.kt               Downscales picked covers into internal storage
-    PdfExporter.kt                PdfDocument-based exporter
-    BackupManager.kt              JSON export / import (format in BackupJson)
-    Extensions.kt                 Small helpers, inset handling, enum labels
+    common/                       ViewModelFactory, view/inset helpers, enum labels
+  util/                           Pure helpers: PasswordHasher, Isbn, date formatting
 
 app/src/test/...                  Mirrors the same package structure
+app/schemas/                      Room schema snapshots, one JSON per version (committed)
 ```
+
+Navigation between screens goes through Safe Args (`*Directions` / `*Args`), so a renamed or retyped argument is a compile error rather than a silent `0L`.
 
 ## Running it
 

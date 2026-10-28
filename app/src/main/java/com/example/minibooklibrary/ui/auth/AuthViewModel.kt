@@ -75,12 +75,6 @@ class AuthViewModel(private val userRepository: UserRepository) : ViewModel() {
     fun consumeError() {
         _uiState.value = _uiState.value.copy(error = null)
     }
-
-    /** Sign-out — clears persisted session and emits a navigation event. */
-    fun logout() {
-        userRepository.logout()
-        viewModelScope.launch { _events.emit(AuthEvent.LoggedOut) }
-    }
 }
 
 data class AuthUiState(
@@ -112,5 +106,4 @@ internal fun AuthResult.FailureReason.toAuthError(): AuthError = when (this) {
 sealed class AuthEvent {
     data class LoggedIn(val userId: Long, val username: String) : AuthEvent()
     data class Registered(val username: String) : AuthEvent()
-    data object LoggedOut : AuthEvent()
 }
