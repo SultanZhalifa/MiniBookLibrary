@@ -72,7 +72,6 @@
             app:boxStrokeWidth="0dp"
             app:boxStrokeWidthFocused="0dp"
             android:hint="@string/hint_username"
-            app:startIconDrawable="@drawable/ic_search"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/subtitle">

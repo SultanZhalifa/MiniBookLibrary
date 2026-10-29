@@ -1,14 +1,18 @@
 package com.example.minibooklibrary
 
 import android.os.ParcelFileDescriptor
+import android.os.SystemClock
+import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
 import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso.closeSoftKeyboard
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.Espresso.pressBack
+import androidx.test.espresso.NoMatchingViewException
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.typeText
+import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
@@ -56,10 +60,13 @@ class ScreenshotTourTest {
         closeSoftKeyboard()
         onView(withId(R.id.btnRegister)).perform(click())
 
+        // Hashing runs on a background dispatcher Espresso doesn't track.
+        waitFor(R.id.btnLogin)
         onView(withId(R.id.inputUsername)).perform(typeText(USERNAME))
         onView(withId(R.id.inputPassword)).perform(typeText(PASSWORD))
         closeSoftKeyboard()
         onView(withId(R.id.btnLogin)).perform(click())
+        waitFor(R.id.bottomNav)
 
         seedLibrary()
         capture("03_dashboard")
@@ -67,11 +74,15 @@ class ScreenshotTourTest {
         onView(withId(R.id.bookListFragment)).perform(click())
         capture("04_library")
 
+        waitFor(R.id.recycler)
         onView(allOf(withText(READING_TITLE), isDisplayed())).perform(click())
+        waitFor(R.id.btnEdit)
         capture("05_detail")
         pressBack()
 
+        waitFor(R.id.fabAdd)
         onView(withId(R.id.fabAdd)).perform(click())
+        waitFor(R.id.btnSave)
         capture("06_edit")
         onView(withId(R.id.inputTitle)).perform(click())
         capture("06b_edit_keyboard")
@@ -82,14 +93,18 @@ class ScreenshotTourTest {
         capture("07_settings")
 
         onView(withId(R.id.themeDark)).perform(click())
+        // Switching theme recreates the activity.
+        waitFor(R.id.bottomNav)
         onView(withId(R.id.dashboardFragment)).perform(click())
         capture("08_dark_mode")
 
         onView(withId(R.id.settingsFragment)).perform(click())
         onView(withId(R.id.themeLight)).perform(click())
+        waitFor(R.id.bottomNav)
         instrumentation.runOnMainSync {
             AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags("in"))
         }
+        waitFor(R.id.bottomNav)
         onView(withId(R.id.dashboardFragment)).perform(click())
         capture("10_dashboard_indonesian")
     }
@@ -149,6 +164,21 @@ class ScreenshotTourTest {
             )
         }
         ServiceLocator.provideBookRepository(context).addAll(books, log)
+    }
+
+    /** Poll until [id] is on screen, for work Espresso's idling doesn't cover. */
+    private fun waitFor(@IdRes id: Int, timeoutMs: Long = 30_000) {
+        val deadline = SystemClock.uptimeMillis() + timeoutMs
+        while (true) {
+            try {
+                onView(withId(id)).check(matches(isDisplayed()))
+                return
+            } catch (e: Throwable) {
+                if (e !is NoMatchingViewException && e !is AssertionError) throw e
+                if (SystemClock.uptimeMillis() > deadline) throw e
+                Thread.sleep(250)
+            }
+        }
     }
 
     private fun capture(name: String) {
