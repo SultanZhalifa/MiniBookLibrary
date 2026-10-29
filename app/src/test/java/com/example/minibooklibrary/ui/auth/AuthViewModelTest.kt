@@ -90,5 +90,4 @@ class AuthViewModelTest {
         vm.consumeError()
         assertEquals(null, vm.uiState.value.error)
     }
-
 }
