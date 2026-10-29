@@ -4,6 +4,8 @@ import android.content.Context
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.ComponentActivity
+import androidx.activity.enableEdgeToEdge
 import androidx.annotation.StringRes
 import androidx.core.graphics.Insets
 import androidx.core.view.ViewCompat
@@ -29,6 +31,19 @@ fun Fragment.toast(@StringRes message: Int) {
 fun View.show() { visibility = View.VISIBLE }
 fun View.showIf(condition: Boolean) {
     visibility = if (condition) View.VISIBLE else View.GONE
+}
+
+/**
+ * [enableEdgeToEdge] plus a fresh insets pass. Call it after `setContentView`.
+ *
+ * In an activity recreated for a configuration change (switching to dark mode), the
+ * window's root view kept the status-bar padding from an insets pass made before
+ * edge-to-edge applied, so the whole screen sat inside the system bars until the next
+ * launch. Re-dispatching insets makes it recompute that padding.
+ */
+fun ComponentActivity.setUpEdgeToEdge() {
+    enableEdgeToEdge()
+    ViewCompat.requestApplyInsets(window.decorView)
 }
 
 /**

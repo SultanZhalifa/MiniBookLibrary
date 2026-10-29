@@ -2,7 +2,6 @@ package com.example.minibooklibrary.ui.main
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -10,6 +9,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.example.minibooklibrary.R
 import com.example.minibooklibrary.databinding.ActivityMainBinding
 import com.example.minibooklibrary.ui.RouterActivity
+import com.example.minibooklibrary.ui.common.setUpEdgeToEdge
 
 /**
  * Single-Activity host for the post-login app. Holds three top-level destinations
@@ -26,11 +26,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        // After setContentView: in the activity AppCompat recreates for a night-mode change,
-        // calling this any earlier left the window fitting the system bars again.
         // Screens pad their own headers for the status bar; the bottom nav pads itself for
         // the navigation bar, and screens that hide it (detail, edit) handle that edge too.
-        enableEdgeToEdge()
+        setUpEdgeToEdge()
 
         val navHost = supportFragmentManager
             .findFragmentById(R.id.main_nav_host) as NavHostFragment

@@ -2,7 +2,6 @@ package com.example.minibooklibrary.ui.auth
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
@@ -11,6 +10,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.example.minibooklibrary.databinding.ActivityAuthBinding
 import com.example.minibooklibrary.ui.common.ViewModelFactory
 import com.example.minibooklibrary.ui.common.applySystemBarInsets
+import com.example.minibooklibrary.ui.common.setUpEdgeToEdge
 import com.example.minibooklibrary.ui.main.MainActivity
 import kotlinx.coroutines.launch
 
@@ -28,7 +28,7 @@ class AuthActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityAuthBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        enableEdgeToEdge()
+        setUpEdgeToEdge()
         binding.root.applySystemBarInsets(top = true, bottom = true, ime = true)
 
         // Listen for session-level events: a successful login navigates to MainActivity
