@@ -43,9 +43,9 @@ class OnboardingActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         binding = ActivityOnboardingBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        enableEdgeToEdge()
         binding.root.applySystemBarInsets(top = true, bottom = true)
 
         binding.viewPager.adapter = OnboardingPagerAdapter(pages)

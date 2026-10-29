@@ -24,14 +24,13 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // After super.onCreate: when AppCompat recreates the activity for a night-mode
-        // change it re-applies window setup there, and calling this first left dark mode
-        // laid out inside the system bars.
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        // After setContentView: in the activity AppCompat recreates for a night-mode change,
+        // calling this any earlier left the window fitting the system bars again.
         // Screens pad their own headers for the status bar; the bottom nav pads itself for
         // the navigation bar, and screens that hide it (detail, edit) handle that edge too.
         enableEdgeToEdge()
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
 
         val navHost = supportFragmentManager
             .findFragmentById(R.id.main_nav_host) as NavHostFragment

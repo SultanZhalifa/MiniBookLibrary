@@ -26,9 +26,9 @@ class AuthActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         binding = ActivityAuthBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        enableEdgeToEdge()
         binding.root.applySystemBarInsets(top = true, bottom = true, ime = true)
 
         // Listen for session-level events: a successful login navigates to MainActivity
