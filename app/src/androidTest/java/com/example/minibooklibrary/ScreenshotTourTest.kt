@@ -2,6 +2,7 @@ package com.example.minibooklibrary
 
 import android.os.ParcelFileDescriptor
 import android.os.SystemClock
+import android.view.View
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
@@ -18,6 +19,8 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry
+import androidx.test.runner.lifecycle.Stage
 import com.example.minibooklibrary.data.local.entity.BookEntity
 import com.example.minibooklibrary.data.local.entity.ReadingLogEntity
 import com.example.minibooklibrary.di.ServiceLocator
@@ -80,6 +83,7 @@ class ScreenshotTourTest {
 
         seedLibrary()
         capture("03_dashboard")
+        assertEdgeToEdge()
 
         onView(withId(R.id.bookListFragment)).perform(click())
         capture("04_library")
@@ -109,6 +113,7 @@ class ScreenshotTourTest {
         waitFor(R.id.bottomNav)
         onView(withId(R.id.dashboardFragment)).perform(click())
         capture("08_dark_mode")
+        assertEdgeToEdge()
         onView(withId(R.id.bookListFragment)).perform(click())
         capture("08b_dark_library")
         onView(withId(R.id.dashboardFragment)).perform(click())
@@ -123,6 +128,7 @@ class ScreenshotTourTest {
         waitFor(R.id.bottomNav)
         onView(withId(R.id.dashboardFragment)).perform(click())
         capture("10_dashboard_indonesian")
+        assertEdgeToEdge()
     }
 
     /** A handful of books and five days of reading, so the dashboard has real numbers. */
@@ -210,6 +216,20 @@ class ScreenshotTourTest {
         false
     } catch (e: AssertionError) {
         false
+    }
+
+    /** Content must start at the very top of the screen, behind the status bar. */
+    private fun assertEdgeToEdge() {
+        instrumentation.runOnMainSync {
+            val activity = ActivityLifecycleMonitorRegistry.getInstance()
+                .getActivitiesInStage(Stage.RESUMED)
+                .single()
+            val location = IntArray(2)
+            activity.findViewById<View>(android.R.id.content).getLocationOnScreen(location)
+            check(location[1] == 0) {
+                "${activity.javaClass.simpleName} isn't edge-to-edge: content starts at y=${location[1]}"
+            }
+        }
     }
 
     private fun capture(name: String) {

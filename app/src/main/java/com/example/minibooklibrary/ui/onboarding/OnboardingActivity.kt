@@ -42,8 +42,8 @@ class OnboardingActivity : AppCompatActivity() {
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         binding = ActivityOnboardingBinding.inflate(layoutInflater)
         setContentView(binding.root)
         binding.root.applySystemBarInsets(top = true, bottom = true)

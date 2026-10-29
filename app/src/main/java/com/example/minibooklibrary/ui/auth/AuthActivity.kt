@@ -25,8 +25,8 @@ class AuthActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAuthBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         binding = ActivityAuthBinding.inflate(layoutInflater)
         setContentView(binding.root)
         binding.root.applySystemBarInsets(top = true, bottom = true, ime = true)

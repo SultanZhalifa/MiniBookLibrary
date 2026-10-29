@@ -23,10 +23,13 @@ class MainActivity : AppCompatActivity() {
     private lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        // After super.onCreate: when AppCompat recreates the activity for a night-mode
+        // change it re-applies window setup there, and calling this first left dark mode
+        // laid out inside the system bars.
         // Screens pad their own headers for the status bar; the bottom nav pads itself for
         // the navigation bar, and screens that hide it (detail, edit) handle that edge too.
         enableEdgeToEdge()
-        super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
