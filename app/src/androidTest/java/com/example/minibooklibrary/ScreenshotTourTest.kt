@@ -87,6 +87,9 @@ class ScreenshotTourTest {
         capture("06b_edit_keyboard")
         closeSoftKeyboard()
         backUntil(R.id.bottomNav)
+        // Focus lands on the library search box, which can bring the keyboard back over
+        // the bottom nav. Clicks on another app's window (the IME) are rejected.
+        closeSoftKeyboard()
 
         onView(withId(R.id.settingsFragment)).perform(click())
         capture("07_settings")
@@ -169,7 +172,9 @@ class ScreenshotTourTest {
     private fun waitFor(@IdRes id: Int, timeoutMs: Long = 30_000) {
         val deadline = SystemClock.uptimeMillis() + timeoutMs
         while (!isShown(id)) {
-            check(SystemClock.uptimeMillis() < deadline) { "View ${context.resources.getResourceName(id)} never appeared" }
+            check(SystemClock.uptimeMillis() < deadline) {
+                "View ${context.resources.getResourceName(id)} never appeared"
+            }
             Thread.sleep(250)
         }
     }
