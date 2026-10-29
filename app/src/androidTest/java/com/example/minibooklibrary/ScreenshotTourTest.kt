@@ -109,6 +109,10 @@ class ScreenshotTourTest {
         waitFor(R.id.bottomNav)
         onView(withId(R.id.dashboardFragment)).perform(click())
         capture("08_dark_mode")
+        onView(withId(R.id.bookListFragment)).perform(click())
+        capture("08b_dark_library")
+        onView(withId(R.id.dashboardFragment)).perform(click())
+        capture("08c_dark_dashboard_again")
 
         onView(withId(R.id.settingsFragment)).perform(click())
         onView(withId(R.id.themeLight)).perform(click())
