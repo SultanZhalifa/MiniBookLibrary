@@ -224,13 +224,22 @@ class ScreenshotTourTest {
             val activity = ActivityLifecycleMonitorRegistry.getInstance()
                 .getActivitiesInStage(Stage.RESUMED)
                 .single()
+            val content = activity.findViewById<View>(android.R.id.content)
             val location = IntArray(2)
-            activity.findViewById<View>(android.R.id.content).getLocationOnScreen(location)
+            content.getLocationOnScreen(location)
             check(location[1] == 0) {
-                "${activity.javaClass.simpleName} isn't edge-to-edge: content starts at y=${location[1]}"
+                "${activity.javaClass.simpleName} isn't edge-to-edge: content starts at " +
+                    "y=${location[1]}. Ancestors:\n" + describeAncestors(content)
             }
         }
     }
+
+    /** Which ancestor is pushing content down: each view's offset, padding and fitsSystemWindows. */
+    private fun describeAncestors(view: View): String = generateSequence(view) { it.parent as? View }
+        .joinToString("\n") {
+            "  ${it.javaClass.simpleName} top=${it.top} paddingTop=${it.paddingTop} " +
+                "fitsSystemWindows=${it.fitsSystemWindows}"
+        }
 
     private fun capture(name: String) {
         // screencap isn't synchronized with Espresso: let Room flows, toasts and
