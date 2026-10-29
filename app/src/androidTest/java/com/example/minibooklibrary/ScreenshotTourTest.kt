@@ -1,5 +1,6 @@
 package com.example.minibooklibrary
 
+import android.content.Intent
 import android.os.ParcelFileDescriptor
 import android.os.SystemClock
 import android.view.View
@@ -25,6 +26,7 @@ import com.example.minibooklibrary.data.local.entity.BookEntity
 import com.example.minibooklibrary.data.local.entity.ReadingLogEntity
 import com.example.minibooklibrary.di.ServiceLocator
 import com.example.minibooklibrary.domain.ReadingStatus
+import com.example.minibooklibrary.ui.main.MainActivity
 import com.example.minibooklibrary.ui.onboarding.OnboardingActivity
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.Matchers.allOf
@@ -113,11 +115,18 @@ class ScreenshotTourTest {
         waitFor(R.id.bottomNav)
         onView(withId(R.id.dashboardFragment)).perform(click())
         capture("08_dark_mode")
-        assertEdgeToEdge()
-        onView(withId(R.id.bookListFragment)).perform(click())
-        capture("08b_dark_library")
-        onView(withId(R.id.dashboardFragment)).perform(click())
-        capture("08c_dark_dashboard_again")
+        val afterRecreate = edgeToEdgeProblem()
+        // Same theme, but a brand-new activity instead of the one recreated for the switch.
+        context.startActivity(
+            Intent(context, MainActivity::class.java)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        )
+        waitFor(R.id.bottomNav)
+        capture("08b_dark_fresh_activity")
+        val freshActivity = edgeToEdgeProblem()
+        check(afterRecreate == null && freshActivity == null) {
+            "Dark mode isn't edge-to-edge.\nAfter recreate: $afterRecreate\nFresh activity: $freshActivity"
+        }
 
         onView(withId(R.id.settingsFragment)).perform(click())
         onView(withId(R.id.themeLight)).perform(click())
@@ -220,6 +229,12 @@ class ScreenshotTourTest {
 
     /** Content must start at the very top of the screen, behind the status bar. */
     private fun assertEdgeToEdge() {
+        edgeToEdgeProblem()?.let { throw IllegalStateException(it) }
+    }
+
+    /** Null when the resumed activity draws behind the status bar, otherwise what's wrong. */
+    private fun edgeToEdgeProblem(): String? {
+        var problem: String? = null
         instrumentation.runOnMainSync {
             val activity = ActivityLifecycleMonitorRegistry.getInstance()
                 .getActivitiesInStage(Stage.RESUMED)
@@ -227,11 +242,16 @@ class ScreenshotTourTest {
             val content = activity.findViewById<View>(android.R.id.content)
             val location = IntArray(2)
             content.getLocationOnScreen(location)
-            check(location[1] == 0) {
-                "${activity.javaClass.simpleName} isn't edge-to-edge: content starts at " +
-                    "y=${location[1]}. Ancestors:\n" + describeAncestors(content)
+            if (location[1] != 0) {
+                val attrs = activity.window.attributes
+                problem = "${activity.javaClass.simpleName}@${System.identityHashCode(activity)} " +
+                    "content starts at y=${location[1]}; window fitInsetsTypes=${attrs.fitInsetsTypes} " +
+                    "flags=0x${Integer.toHexString(attrs.flags)} " +
+                    "sysUi=0x${Integer.toHexString(activity.window.decorView.systemUiVisibility)}" +
+                    "\nAncestors:\n" + describeAncestors(content)
             }
         }
+        return problem
     }
 
     /** Which ancestor is pushing content down: each view's offset, padding and fitsSystemWindows. */
