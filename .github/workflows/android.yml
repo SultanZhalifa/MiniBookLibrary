@@ -125,13 +125,14 @@ jobs:
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 35
-          target: google_apis
+          # Plain AOSP image: no Pixel Launcher, which kept ANR-ing on CI runners.
+          target: default
           arch: x86_64
           profile: pixel_6
           disable-animations: true
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-          # hide_error_dialogs: CI emulators sometimes pop "Pixel Launcher isn't responding"
-          # over the app, which blocks Espresso's clicks.
+          # hide_error_dialogs: a system "isn't responding" dialog over the app blocks
+          # Espresso's clicks.
           script: |
             adb shell settings put global hide_error_dialogs 1
             ./gradlew connectedDebugAndroidTest --stacktrace; status=$?; adb pull /data/local/tmp/screenshots screenshots-out || true; exit $status

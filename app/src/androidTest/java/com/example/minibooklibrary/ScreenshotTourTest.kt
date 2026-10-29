@@ -52,6 +52,9 @@ class ScreenshotTourTest {
     @Test
     fun tour() {
         shell("mkdir -p $OUT_DIR")
+        // A freshly booted emulator can still be showing a system dialog (e.g. a launcher
+        // ANR) that would sit on top of the app and swallow every click.
+        shell("am broadcast -a android.intent.action.CLOSE_SYSTEM_DIALOGS")
         try {
             walkThroughApp()
         } catch (t: Throwable) {
