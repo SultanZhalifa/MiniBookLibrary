@@ -16,6 +16,8 @@ android {
         targetSdk = 36
         versionCode = 3
         versionName = "2.1"
+
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildFeatures {
@@ -114,4 +116,9 @@ dependencies {
     testImplementation(libs.androidx.room.testing)
     testImplementation(libs.androidx.test.core)
     testImplementation(libs.androidx.test.junit)
+
+    // Emulator screenshot tour (ScreenshotTourTest), run by the CI "Emulator screenshots" job.
+    androidTestImplementation(libs.androidx.test.junit)
+    androidTestImplementation(libs.androidx.test.runner)
+    androidTestImplementation(libs.androidx.espresso.core)
 }
