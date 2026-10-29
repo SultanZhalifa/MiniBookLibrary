@@ -34,15 +34,23 @@ fun View.showIf(condition: Boolean) {
 }
 
 /**
- * [enableEdgeToEdge] plus a fresh insets pass. Call it after `setContentView`.
+ * [enableEdgeToEdge], plus a guard for the activity Android recreates when the user
+ * switches to dark mode. Call it after `setContentView`.
  *
- * In an activity recreated for a configuration change (switching to dark mode), the
- * window's root view kept the status-bar padding from an insets pass made before
- * edge-to-edge applied, so the whole screen sat inside the system bars until the next
- * launch. Re-dispatching insets makes it recompute that padding.
+ * In that recreated activity the platform's own content root (the decor view's first
+ * child, `fitsSystemWindows="true"` in the framework layout) kept padding itself by the
+ * status and navigation bar heights, so the whole app sat inside the bars until the next
+ * launch. A fresh activity in the same theme was fine. The emulator screenshot tour
+ * caught it. Here that root is told to leave the insets alone and pass them on: in an
+ * edge-to-edge window it should never pad, whatever state it was restored in.
  */
 fun ComponentActivity.setUpEdgeToEdge() {
     enableEdgeToEdge()
+    val platformContentRoot = (window.decorView as ViewGroup).getChildAt(0) ?: return
+    ViewCompat.setOnApplyWindowInsetsListener(platformContentRoot) { view, insets ->
+        view.setPadding(0, 0, 0, 0)
+        insets
+    }
     ViewCompat.requestApplyInsets(window.decorView)
 }
 
