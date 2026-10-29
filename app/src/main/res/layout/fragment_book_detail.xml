@@ -135,6 +135,8 @@
                         android:orientation="vertical">
                         <TextView
                             style="@style/TextAppearance.MiniBookLibrary.Caption"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
                             android:text="@string/detail_rating_label"
                             android:textAllCaps="true" />
                         <LinearLayout
@@ -168,6 +170,8 @@
                         android:orientation="vertical">
                         <TextView
                             style="@style/TextAppearance.MiniBookLibrary.Caption"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
                             android:text="@string/detail_published_label"
                             android:textAllCaps="true" />
                         <TextView
@@ -191,6 +195,8 @@
 
                 <TextView
                     style="@style/TextAppearance.MiniBookLibrary.Title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:text="@string/detail_progress" />
 
                 <TextView
