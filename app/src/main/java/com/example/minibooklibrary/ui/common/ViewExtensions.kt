@@ -37,20 +37,25 @@ fun View.showIf(condition: Boolean) {
  * [enableEdgeToEdge], plus a guard for the activity Android recreates when the user
  * switches to dark mode. Call it after `setContentView`.
  *
- * In that recreated activity the platform's own content root (the decor view's first
- * child, `fitsSystemWindows="true"` in the framework layout) kept padding itself by the
- * status and navigation bar heights, so the whole app sat inside the bars until the next
- * launch. A fresh activity in the same theme was fine. The emulator screenshot tour
- * caught it. Here that root is told to leave the insets alone and pass them on: in an
- * edge-to-edge window it should never pad, whatever state it was restored in.
+ * In that recreated activity the framework and AppCompat wrappers above our layout
+ * (`fitsSystemWindows="true"` in their own XML) kept padding themselves by the system bar
+ * heights, so the whole app sat inside the bars until the next launch. A fresh activity in
+ * the same theme was fine. The emulator screenshot tour caught it.
+ *
+ * Every screen here applies insets itself, so no wrapper should ever pad: each one is told
+ * to leave the insets alone and pass them on to our views.
  */
 fun ComponentActivity.setUpEdgeToEdge() {
     enableEdgeToEdge()
-    val platformContentRoot = (window.decorView as ViewGroup).getChildAt(0) ?: return
-    ViewCompat.setOnApplyWindowInsetsListener(platformContentRoot) { view, insets ->
-        view.setPadding(0, 0, 0, 0)
-        insets
-    }
+    val content = findViewById<View>(android.R.id.content)
+    generateSequence(content.parent as? View) { it.parent as? View }
+        .filter { it.fitsSystemWindows }
+        .forEach { wrapper ->
+            ViewCompat.setOnApplyWindowInsetsListener(wrapper) { view, insets ->
+                view.setPadding(0, 0, 0, 0)
+                insets
+            }
+        }
     ViewCompat.requestApplyInsets(window.decorView)
 }
 
