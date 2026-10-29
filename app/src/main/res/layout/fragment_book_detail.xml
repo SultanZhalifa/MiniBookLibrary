@@ -47,6 +47,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:layout_collapseMode="pin"
+                app:navigationContentDescription="@string/action_back"
                 app:navigationIcon="@drawable/ic_back"
                 app:navigationIconTint="#FFFFFF" />
 
@@ -65,7 +66,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="24dp">
+            android:paddingHorizontal="24dp"
+            android:paddingTop="24dp"
+            android:paddingBottom="112dp">
 
             <TextView
                 android:id="@+id/title"

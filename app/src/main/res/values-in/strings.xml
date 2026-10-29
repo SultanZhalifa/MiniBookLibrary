@@ -182,6 +182,7 @@
     <string name="pdf_page_footer">Halaman %1$d dari %2$d</string>
 
     <!-- Common -->
+    <string name="action_back">Kembali</string>
     <string name="action_cancel">Batal</string>
     <string name="action_close">Tutup</string>
     <string name="action_delete">Hapus</string>

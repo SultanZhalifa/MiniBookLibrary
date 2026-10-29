@@ -53,7 +53,8 @@ class BookListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.header.applySystemBarInsets(top = true)
+        // The header lives in a CollapsingToolbarLayout, which eats insets; read them from the root.
+        binding.header.applySystemBarInsets(top = true, source = binding.root)
 
         adapter = BookAdapter(BookAdapter.LayoutVariant.VERTICAL) { book ->
             findNavController().navigate(BookListFragmentDirections.actionLibraryToDetail(book.id))

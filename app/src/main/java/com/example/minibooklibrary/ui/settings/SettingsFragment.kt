@@ -66,7 +66,8 @@ class SettingsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.header.applySystemBarInsets(top = true)
+        // The header lives in a CollapsingToolbarLayout, which eats insets; read them from the root.
+        binding.header.applySystemBarInsets(top = true, source = binding.root)
 
         // Theme toggle group: maps Material's chip ids to AppCompatDelegate constants.
         binding.themeToggle.addOnButtonCheckedListener { _, checkedId, isChecked ->

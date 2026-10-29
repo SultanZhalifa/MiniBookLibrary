@@ -54,7 +54,8 @@ class DashboardFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.header.applySystemBarInsets(top = true)
+        // The header lives in a CollapsingToolbarLayout, which eats insets; read them from the root.
+        binding.header.applySystemBarInsets(top = true, source = binding.root)
         recentAdapter = BookAdapter(BookAdapter.LayoutVariant.HORIZONTAL) { book ->
             findNavController().navigate(DashboardFragmentDirections.actionDashboardToDetail(book.id))
         }

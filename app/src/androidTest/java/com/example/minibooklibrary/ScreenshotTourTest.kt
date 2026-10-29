@@ -78,16 +78,15 @@ class ScreenshotTourTest {
         onView(allOf(withText(READING_TITLE), isDisplayed())).perform(click())
         waitFor(R.id.btnEdit)
         capture("05_detail")
-        pressBack()
+        backUntil(R.id.fabAdd)
 
-        waitFor(R.id.fabAdd)
         onView(withId(R.id.fabAdd)).perform(click())
         waitFor(R.id.btnSave)
         capture("06_edit")
         onView(withId(R.id.inputTitle)).perform(click())
         capture("06b_edit_keyboard")
         closeSoftKeyboard()
-        pressBack()
+        backUntil(R.id.bottomNav)
 
         onView(withId(R.id.settingsFragment)).perform(click())
         capture("07_settings")
@@ -169,16 +168,29 @@ class ScreenshotTourTest {
     /** Poll until [id] is on screen, for work Espresso's idling doesn't cover. */
     private fun waitFor(@IdRes id: Int, timeoutMs: Long = 30_000) {
         val deadline = SystemClock.uptimeMillis() + timeoutMs
-        while (true) {
-            try {
-                onView(withId(id)).check(matches(isDisplayed()))
-                return
-            } catch (e: Throwable) {
-                if (e !is NoMatchingViewException && e !is AssertionError) throw e
-                if (SystemClock.uptimeMillis() > deadline) throw e
-                Thread.sleep(250)
-            }
+        while (!isShown(id)) {
+            check(SystemClock.uptimeMillis() < deadline) { "View ${context.resources.getResourceName(id)} never appeared" }
+            Thread.sleep(250)
         }
+    }
+
+    /** Press Back until [id] shows. The first press may only dismiss the keyboard. */
+    private fun backUntil(@IdRes id: Int) {
+        repeat(3) {
+            if (isShown(id)) return
+            pressBack()
+            instrumentation.waitForIdleSync()
+        }
+        waitFor(id)
+    }
+
+    private fun isShown(@IdRes id: Int): Boolean = try {
+        onView(withId(id)).check(matches(isDisplayed()))
+        true
+    } catch (e: NoMatchingViewException) {
+        false
+    } catch (e: AssertionError) {
+        false
     }
 
     private fun capture(name: String) {

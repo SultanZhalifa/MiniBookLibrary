@@ -188,6 +188,7 @@
     <string name="pdf_page_footer">Page %1$d of %2$d</string>
 
     <!-- Common -->
+    <string name="action_back">Back</string>
     <string name="action_cancel">Cancel</string>
     <string name="action_close">Close</string>
     <string name="action_delete">Delete</string>

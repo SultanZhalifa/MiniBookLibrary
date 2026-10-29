@@ -77,7 +77,9 @@ class AddEditBookFragment : Fragment() {
 
         // Bottom nav is hidden here, so this screen owns the bottom inset.
         binding.appBar.applySystemBarInsets(top = true)
-        binding.scroll.applySystemBarInsets(bottom = true, ime = true)
+        // A margin, not padding: shrinking the scroll view is what makes it bring the
+        // focused field above the keyboard.
+        binding.scroll.applySystemBarMargins(bottom = true, ime = true)
         binding.btnSave.applySystemBarMargins(bottom = true)
 
         setupCategoryDropdown()

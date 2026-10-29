@@ -19,6 +19,7 @@ import com.example.minibooklibrary.databinding.DialogUpdateProgressBinding
 import com.example.minibooklibrary.databinding.FragmentBookDetailBinding
 import com.example.minibooklibrary.domain.ReadingStatus
 import com.example.minibooklibrary.ui.common.ViewModelFactory
+import com.example.minibooklibrary.ui.common.applySystemBarInsets
 import com.example.minibooklibrary.ui.common.applySystemBarMargins
 import com.example.minibooklibrary.ui.common.labelRes
 import com.example.minibooklibrary.ui.common.show
@@ -60,9 +61,11 @@ class BookDetailFragment : Fragment() {
         viewModel.load(bookId)
 
         binding.toolbar.setNavigationOnClickListener { findNavController().popBackStack() }
-        binding.toolbar.applySystemBarMargins(top = true)
+        // The toolbar is inside a CollapsingToolbarLayout, which eats insets; read them from the root.
+        binding.toolbar.applySystemBarMargins(top = true, source = binding.root)
         binding.btnEdit.applySystemBarMargins(bottom = true)
         binding.bottomActions.applySystemBarMargins(bottom = true)
+        binding.scrollContent.applySystemBarInsets(bottom = true)
 
         // Handle toolbar title appearance on scroll
         binding.appBar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
