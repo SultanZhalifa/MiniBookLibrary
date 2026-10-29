@@ -7,10 +7,12 @@
     android:layout_height="match_parent"
     android:background="?android:colorBackground">
 
+    <!-- The gradient sits on the AppBarLayout, which spans the status bar area, rather
+         than on the padded header inside it, so nothing between them can leave a gap. -->
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
+        android:background="@drawable/bg_gradient_header"
         app:elevation="0dp">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
@@ -22,9 +24,8 @@
                 android:id="@+id/header"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bg_gradient_header"
                 android:paddingHorizontal="24dp"
-                android:paddingTop="48dp"
+                android:paddingTop="24dp"
                 android:paddingBottom="48dp">
 
                 <TextView
