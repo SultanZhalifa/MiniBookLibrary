@@ -6,7 +6,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.OptIn
 import androidx.camera.core.CameraSelector
+import androidx.camera.core.ExperimentalGetImage
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.Preview
 import androidx.camera.core.resolutionselector.ResolutionSelector
@@ -112,7 +114,9 @@ class BarcodeScannerFragment : Fragment() {
         }, ContextCompat.getMainExecutor(requireContext()))
     }
 
-    @androidx.camera.core.ExperimentalGetImage
+    // Opt in here instead of re-declaring the marker, which would spread the experimental
+    // requirement to every caller (setAnalyzer).
+    @OptIn(ExperimentalGetImage::class)
     private fun analyzeImage(imageProxy: androidx.camera.core.ImageProxy) {
         val mediaImage = imageProxy.image
         if (mediaImage == null) {

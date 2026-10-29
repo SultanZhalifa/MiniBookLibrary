@@ -130,7 +130,11 @@ jobs:
           profile: pixel_6
           disable-animations: true
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-          script: ./gradlew connectedDebugAndroidTest --stacktrace; status=$?; adb pull /data/local/tmp/screenshots screenshots-out || true; exit $status
+          # hide_error_dialogs: CI emulators sometimes pop "Pixel Launcher isn't responding"
+          # over the app, which blocks Espresso's clicks.
+          script: |
+            adb shell settings put global hide_error_dialogs 1
+            ./gradlew connectedDebugAndroidTest --stacktrace; status=$?; adb pull /data/local/tmp/screenshots screenshots-out || true; exit $status
 
       - name: Upload screenshots
         if: always()
