@@ -133,3 +133,12 @@ jobs:
           path: screenshots-out/
           if-no-files-found: warn
           retention-days: 14
+
+      - name: Upload instrumented test report (on failure)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-test-report
+          path: |
+            app/build/reports/androidTests/
+            app/build/outputs/androidTest-results/

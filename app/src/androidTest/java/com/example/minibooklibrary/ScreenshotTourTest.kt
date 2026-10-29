@@ -47,6 +47,16 @@ class ScreenshotTourTest {
     @Test
     fun tour() {
         shell("mkdir -p $OUT_DIR")
+        try {
+            walkThroughApp()
+        } catch (t: Throwable) {
+            // Whatever was on screen when a step failed is the fastest way to see why.
+            shell("screencap -p $OUT_DIR/zz_failure.png")
+            throw t
+        }
+    }
+
+    private fun walkThroughApp() {
         ActivityScenario.launch(OnboardingActivity::class.java)
         capture("01_onboarding")
         onView(withId(R.id.btnSkip)).perform(click())
