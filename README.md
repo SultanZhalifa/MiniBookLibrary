@@ -191,11 +191,13 @@ The suite covers these classes:
 - `BookListViewModelTest` covers search, status filter, A-Z sort, sort/filter persistence, swipe-delete, and Undo restore.
 - `AddEditBookViewModelTest` covers form validation (title, year range, page progress), saving new books, edit hydration, and ISBN auto-fill including the rule that user-typed input is never overwritten.
 
-CI also fails if a change to the Room entities isn't accompanied by its new schema snapshot in `app/schemas`.
+CI also fails if a change to the Room entities isn't accompanied by its new schema snapshot in `app/schemas`, and on any Android Lint error.
+
+On top of the unit tests, a second CI job boots an Android 15 emulator and runs `ScreenshotTourTest`: it registers, signs in, seeds a few books and five days of reading, then walks every screen in light, dark and Indonesian, saving a screenshot of each (the `screenshots` artifact) and checking the window is really drawn edge-to-edge. That tour is what caught the detail and settings screens crashing on open, and dark mode being laid out inside the system bars after a theme switch.
 
 ## Screenshots
 
-Screenshots live in `screenshots/`. The README references the filenames below; replace the placeholders by running the app, capturing each screen, and saving the PNGs at the same paths.
+Captured on an Android 15 emulator by the screenshot tour in CI (see Tests), so they show the current build, system bars included.
 
 | Onboarding | Login | Dashboard |
 | :---: | :---: | :---: |
@@ -205,11 +207,9 @@ Screenshots live in `screenshots/`. The README references the filenames below; r
 | :---: | :---: | :---: |
 | ![Library](screenshots/04_library.png) | ![Detail](screenshots/05_detail.png) | ![Edit](screenshots/06_edit.png) |
 
-| Settings | Dark mode | PDF export |
+| Settings | Dark mode | Bahasa Indonesia |
 | :---: | :---: | :---: |
-| ![Settings](screenshots/07_settings.png) | ![Dark mode](screenshots/08_dark_mode.png) | ![PDF](screenshots/09_pdf.png) |
-
-See `screenshots/README.md` for the recommended capture process.
+| ![Settings](screenshots/07_settings.png) | ![Dark mode](screenshots/08_dark_mode.png) | ![Bahasa Indonesia](screenshots/09_indonesian.png) |
 
 ## Roadmap
 
