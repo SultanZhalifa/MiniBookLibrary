@@ -41,6 +41,11 @@ jobs:
       - name: Run unit tests
         run: ./gradlew testDebugUnitTest --stacktrace
 
+      # Lint errors fail the build. Both layout crashes found by the emulator tour (a view
+      # with no size, an anchor to a missing id) are lint errors, so this is the cheap net.
+      - name: Lint
+        run: ./gradlew lintDebug --stacktrace
+
       - name: Assemble debug APK
         run: ./gradlew assembleDebug --stacktrace
 
@@ -66,12 +71,14 @@ jobs:
           path: app/schemas/
           if-no-files-found: warn
 
-      - name: Upload test report (on failure)
+      - name: Upload test and lint reports (on failure)
         if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: unit-test-report
-          path: app/build/reports/tests/
+          path: |
+            app/build/reports/tests/
+            app/build/reports/lint-results-debug.html
 
       - name: Upload debug APK
         uses: actions/upload-artifact@v4
