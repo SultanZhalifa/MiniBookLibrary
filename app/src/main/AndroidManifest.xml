@@ -9,12 +9,8 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-feature android:name="android.hardware.camera" android:required="false" />
 
-    <!-- Reading from gallery on Android 13+ uses the Photo Picker (no permission needed). -->
-    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"
-        android:maxSdkVersion="34" />
-    <!-- Legacy storage permission for older devices, used only when accessing legacy URIs. -->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
-        android:maxSdkVersion="32" />
+    <!-- No storage permissions: covers come from the Photo Picker and exports/restores go
+         through the Storage Access Framework, both of which grant per-file access. -->
 
     <application
         android:name=".MiniBookLibraryApp"
@@ -26,7 +22,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MiniBookLibrary"
-        tools:targetApi="34">
+        tools:targetApi="36">
 
         <!-- Single launcher activity that decides where to route based on session state. -->
         <activity
@@ -49,9 +45,10 @@
             android:exported="false"
             android:theme="@style/Theme.MiniBookLibrary" />
 
+        <!-- Not exported: only reachable through RouterActivity, which checks the session. -->
         <activity
             android:name=".ui.main.MainActivity"
-            android:exported="true"
+            android:exported="false"
             android:theme="@style/Theme.MiniBookLibrary"
             android:windowSoftInputMode="adjustResize" />
 
@@ -65,15 +62,5 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/widget_info" />
         </receiver>
-
-        <provider
-            android:name="androidx.core.content.FileProvider"
-            android:authorities="${applicationId}.fileprovider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_provider_paths" />
-        </provider>
     </application>
 </manifest>

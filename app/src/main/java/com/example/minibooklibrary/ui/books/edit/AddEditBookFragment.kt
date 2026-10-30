@@ -11,22 +11,28 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
-import com.example.minibooklibrary.ui.widget.WidgetRefresher
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import coil.load
 import com.example.minibooklibrary.R
+import com.example.minibooklibrary.data.local.ImageStorage
 import com.example.minibooklibrary.databinding.FragmentAddEditBookBinding
 import com.example.minibooklibrary.domain.ReadingStatus
 import com.example.minibooklibrary.ui.common.ViewModelFactory
-import com.example.minibooklibrary.util.ImageStorage
-import com.example.minibooklibrary.util.show
-import com.example.minibooklibrary.util.showIf
-import com.example.minibooklibrary.util.toast
-import kotlinx.coroutines.launch
+import com.example.minibooklibrary.ui.common.applySystemBarInsets
+import com.example.minibooklibrary.ui.common.applySystemBarMargins
+import com.example.minibooklibrary.ui.common.labelRes
+import com.example.minibooklibrary.ui.common.show
+import com.example.minibooklibrary.ui.common.showIf
+import com.example.minibooklibrary.ui.common.toast
+import com.example.minibooklibrary.ui.widget.WidgetRefresher
 import java.io.File
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * Add a new book or edit an existing one. The form's stored state lives in
@@ -36,6 +42,9 @@ class AddEditBookFragment : Fragment() {
 
     private var _binding: FragmentAddEditBookBinding? = null
     private val binding get() = _binding!!
+
+    /** bookId 0 means "add a new book". */
+    private val args: AddEditBookFragmentArgs by navArgs()
 
     private val viewModel: AddEditBookViewModel by viewModels {
         ViewModelFactory(requireContext())
@@ -64,8 +73,14 @@ class AddEditBookFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val bookId = arguments?.getLong("bookId", 0L) ?: 0L
-        if (bookId > 0L) viewModel.loadForEdit(bookId)
+        if (args.bookId > 0L) viewModel.loadForEdit(args.bookId)
+
+        // Bottom nav is hidden here, so this screen owns the bottom inset.
+        binding.appBar.applySystemBarInsets(top = true)
+        // A margin, not padding: shrinking the scroll view is what makes it bring the
+        // focused field above the keyboard.
+        binding.scroll.applySystemBarMargins(bottom = true, ime = true)
+        binding.btnSave.applySystemBarMargins(bottom = true)
 
         setupCategoryDropdown()
         setupStatusDropdown()
@@ -89,7 +104,7 @@ class AddEditBookFragment : Fragment() {
 
     private fun setupStatusDropdown() {
         val statuses = ReadingStatus.entries
-        val labels = statuses.map { it.displayLabel }.toTypedArray()
+        val labels = statuses.map { getString(it.labelRes) }.toTypedArray()
         val adapter = ArrayAdapter(requireContext(), R.layout.item_dropdown, labels)
         binding.inputStatus.setAdapter(adapter)
         binding.inputStatus.setOnItemClickListener { _, _, position, _ ->
@@ -128,7 +143,7 @@ class AddEditBookFragment : Fragment() {
             viewModel.lookupIsbn(isbn)
         }
         binding.btnScanIsbn.setOnClickListener {
-            findNavController().navigate(R.id.action_addEdit_to_barcodeScanner)
+            findNavController().navigate(AddEditBookFragmentDirections.actionAddEditToBarcodeScanner())
         }
     }
 
@@ -156,7 +171,7 @@ class AddEditBookFragment : Fragment() {
                     setIfDifferent(binding.inputAuthor, state.author)
                     setIfDifferent(binding.inputYear, state.year)
                     setIfDifferent(binding.inputCategory, state.category, false)
-                    setIfDifferent(binding.inputStatus, state.readingStatus.displayLabel, false)
+                    setIfDifferent(binding.inputStatus, getString(state.readingStatus.labelRes), false)
                     setIfDifferent(binding.inputCurrentPage, state.currentPage)
                     setIfDifferent(binding.inputTotalPages, state.totalPages)
                     setIfDifferent(binding.inputNotes, state.notes)
@@ -196,10 +211,10 @@ class AddEditBookFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.validation.collect { errors ->
-                    binding.tilTitle.error = errors.titleError
-                    binding.tilAuthor.error = errors.authorError
-                    binding.tilYear.error = errors.yearError
-                    binding.tilTotalPages.error = errors.pagesError
+                    binding.tilTitle.error = errors.titleError?.let(::getString)
+                    binding.tilAuthor.error = errors.authorError?.let(::getString)
+                    binding.tilYear.error = errors.yearError?.let(::getString)
+                    binding.tilTotalPages.error = errors.pagesError?.let(::getString)
                 }
             }
         }
@@ -223,7 +238,7 @@ class AddEditBookFragment : Fragment() {
                         is EditEvent.LookupSucceeded -> {
                             toast(getString(R.string.addedit_isbn_lookup_success, event.title))
                         }
-                        is EditEvent.LookupFailed -> toast(event.message)
+                        is EditEvent.LookupFailed -> toast(event.messageRes)
                     }
                 }
             }
@@ -231,17 +246,21 @@ class AddEditBookFragment : Fragment() {
     }
 
     private fun onCoverPicked(uri: Uri) {
-        val saved = ImageStorage.saveCoverImage(requireContext(), uri)
-        if (saved == null) {
-            toast("Couldn't load that image")
-            return
+        val appContext = requireContext().applicationContext
+        viewLifecycleOwner.lifecycleScope.launch {
+            // Decoding and re-encoding a camera photo takes long enough to drop frames.
+            val saved = withContext(Dispatchers.IO) { ImageStorage.saveCoverImage(appContext, uri) }
+            if (saved == null) {
+                toast(R.string.addedit_cover_failed)
+                return@launch
+            }
+            // Replace previous cover file (if any) so we don't leak storage on repeated picks.
+            val previous = viewModel.form.value.coverImageUri
+            if (!previous.isNullOrBlank() && previous != saved) {
+                ImageStorage.deleteCoverImage(previous)
+            }
+            viewModel.updateField { copy(coverImageUri = saved) }
         }
-        // Replace previous cover file (if any) so we don't leak storage on repeated picks.
-        val previous = viewModel.form.value.coverImageUri
-        if (!previous.isNullOrBlank() && previous != saved) {
-            ImageStorage.deleteCoverImage(previous)
-        }
-        viewModel.updateField { copy(coverImageUri = saved) }
     }
 
     /** Avoid feedback loops when programmatically setting EditText values. */

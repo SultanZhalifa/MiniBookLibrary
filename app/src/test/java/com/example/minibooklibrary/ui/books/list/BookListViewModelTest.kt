@@ -1,6 +1,5 @@
 package com.example.minibooklibrary.ui.books.list
 
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import app.cash.turbine.test
 import com.example.minibooklibrary.data.local.entity.BookEntity
 import com.example.minibooklibrary.data.preferences.PreferencesManager
@@ -16,7 +15,6 @@ import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -25,14 +23,10 @@ import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class BookListViewModelTest {
-
-    @get:Rule
-    val instantExecutor = InstantTaskExecutorRule()
 
     private val testDispatcher = StandardTestDispatcher()
 
@@ -163,12 +157,14 @@ class BookListViewModelTest {
     }
 
     @Test
-    fun `restore re-adds previously deleted book`() = runTest(testDispatcher) {
+    fun `restore puts the deleted book back as-is`() = runTest(testDispatcher) {
         val vm = newVm()
         val target = book(99L, "Saved", ReadingStatus.FINISHED)
-        coEvery { repo.add(target) } returns 99L
+        coEvery { repo.restore(target) } returns 99L
         vm.restore(target)
         testDispatcher.scheduler.advanceUntilIdle()
-        coVerify { repo.add(target) }
+        // Not add(): that would re-stamp dateAdded and move the book to the top of the list.
+        coVerify { repo.restore(target) }
+        coVerify(exactly = 0) { repo.add(any()) }
     }
 }

@@ -51,28 +51,13 @@ object ServiceLocator {
 
     fun provideBookRepository(context: Context): BookRepository =
         bookRepository ?: synchronized(this) {
-            bookRepository ?: BookRepository(provideDatabase(context).bookDao())
-                .also { bookRepository = it }
+            bookRepository ?: provideDatabase(context).let { db ->
+                BookRepository(db.bookDao(), db.readingLogDao())
+            }.also { bookRepository = it }
         }
 
     fun provideGoogleBooksService(): GoogleBooksService =
         googleBooksService ?: synchronized(this) {
             googleBooksService ?: GoogleBooksService().also { googleBooksService = it }
         }
-
-    /** Test-only escape hatch: swap in test-specific instances, reset between cases. */
-    fun resetForTests(
-        preferences: PreferencesManager? = null,
-        userRepository: UserRepository? = null,
-        bookRepository: BookRepository? = null,
-        googleBooksService: GoogleBooksService? = null
-    ) {
-        synchronized(this) {
-            this.preferences = preferences
-            this.userRepository = userRepository
-            this.bookRepository = bookRepository
-            this.googleBooksService = googleBooksService
-            this.database = null
-        }
-    }
 }

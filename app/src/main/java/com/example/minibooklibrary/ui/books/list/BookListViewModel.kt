@@ -2,10 +2,10 @@ package com.example.minibooklibrary.ui.books.list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.minibooklibrary.data.local.ImageStorage
 import com.example.minibooklibrary.data.local.entity.BookEntity
 import com.example.minibooklibrary.data.preferences.PreferencesManager
 import com.example.minibooklibrary.data.repository.BookRepository
-import com.example.minibooklibrary.domain.ReadingStatus
 import com.example.minibooklibrary.domain.SortOrder
 import com.example.minibooklibrary.domain.StatusFilter
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -36,7 +36,6 @@ class BookListViewModel(
 ) : ViewModel() {
 
     private val _query = MutableStateFlow("")
-    val query: StateFlow<String> = _query
 
     private val _sortOrder = MutableStateFlow(preferences.lastSortOrder)
     val sortOrder: StateFlow<SortOrder> = _sortOrder
@@ -95,7 +94,12 @@ class BookListViewModel(
     }
 
     fun restore(book: BookEntity) {
-        viewModelScope.launch { bookRepository.add(book) }
+        viewModelScope.launch { bookRepository.restore(book) }
+    }
+
+    /** Undo window closed: the cover file for [book] can go. */
+    fun discardCover(book: BookEntity) {
+        ImageStorage.deleteCoverImage(book.coverImageUri)
     }
 
     private fun applyFilter(
@@ -137,6 +141,4 @@ data class BookListUiState(
     val isEmpty: Boolean get() = !isLoading && books.isEmpty()
     val hasNoBooksAtAll: Boolean get() = isEmpty && totalUnfiltered == 0
     val hasNoMatchingResults: Boolean get() = isEmpty && totalUnfiltered > 0
-    val statusForReading: ReadingStatus
-        get() = ReadingStatus.fromStorageValue(statusFilter.storageValue)
 }

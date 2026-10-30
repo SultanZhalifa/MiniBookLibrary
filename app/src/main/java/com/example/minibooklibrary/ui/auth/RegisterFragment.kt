@@ -10,9 +10,10 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import com.example.minibooklibrary.R
 import com.example.minibooklibrary.databinding.FragmentRegisterBinding
 import com.example.minibooklibrary.ui.common.ViewModelFactory
-import com.example.minibooklibrary.util.toast
+import com.example.minibooklibrary.ui.common.toast
 import kotlinx.coroutines.launch
 
 class RegisterFragment : Fragment() {
@@ -43,10 +44,10 @@ class RegisterFragment : Fragment() {
             val confirm = binding.inputConfirmPassword.text?.toString().orEmpty()
             clearErrors()
 
-            if (username.isBlank()) { binding.tilUsername.error = "Username is required"; return@setOnClickListener }
-            if (email.isBlank()) { binding.tilEmail.error = "Email is required"; return@setOnClickListener }
-            if (password.isBlank()) { binding.tilPassword.error = "Password is required"; return@setOnClickListener }
-            if (confirm.isBlank()) { binding.tilConfirmPassword.error = "Confirm your password"; return@setOnClickListener }
+            if (username.isBlank()) { binding.tilUsername.error = getString(R.string.auth_error_username_required); return@setOnClickListener }
+            if (email.isBlank()) { binding.tilEmail.error = getString(R.string.auth_error_email_required); return@setOnClickListener }
+            if (password.isBlank()) { binding.tilPassword.error = getString(R.string.auth_error_password_required); return@setOnClickListener }
+            if (confirm.isBlank()) { binding.tilConfirmPassword.error = getString(R.string.auth_error_confirm_required); return@setOnClickListener }
 
             viewModel.register(username, email, password, confirm)
         }
@@ -58,8 +59,14 @@ class RegisterFragment : Fragment() {
                 viewModel.uiState.collect { state ->
                     binding.btnRegister.isEnabled = !state.isLoading
                     binding.progress.visibility = if (state.isLoading) View.VISIBLE else View.GONE
-                    state.errorMessage?.let { error ->
-                        binding.tilPassword.error = error
+                    state.error?.let { error ->
+                        val field = when (error.field) {
+                            AuthField.USERNAME -> binding.tilUsername
+                            AuthField.EMAIL -> binding.tilEmail
+                            AuthField.PASSWORD -> binding.tilPassword
+                            AuthField.CONFIRM_PASSWORD -> binding.tilConfirmPassword
+                        }
+                        field.error = getString(error.messageRes)
                         viewModel.consumeError()
                     }
                 }
@@ -70,7 +77,7 @@ class RegisterFragment : Fragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.events.collect { event ->
                     if (event is AuthEvent.Registered) {
-                        toast("Welcome, ${event.username} — please sign in.")
+                        toast(getString(R.string.auth_registered, event.username))
                         findNavController().popBackStack()
                     }
                 }

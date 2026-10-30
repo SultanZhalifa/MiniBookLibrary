@@ -12,14 +12,18 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.minibooklibrary.R
 import com.example.minibooklibrary.databinding.FragmentBookListBinding
 import com.example.minibooklibrary.domain.SortOrder
 import com.example.minibooklibrary.domain.StatusFilter
 import com.example.minibooklibrary.ui.common.ViewModelFactory
+import com.example.minibooklibrary.ui.common.applySystemBarInsets
+import com.example.minibooklibrary.ui.common.labelRes
+import com.example.minibooklibrary.ui.common.showIf
 import com.example.minibooklibrary.ui.widget.WidgetRefresher
-import com.example.minibooklibrary.util.showIf
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
@@ -49,12 +53,11 @@ class BookListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        // The header lives in a CollapsingToolbarLayout, which eats insets; read them from the root.
+        binding.header.applySystemBarInsets(top = true, source = binding.root)
 
         adapter = BookAdapter(BookAdapter.LayoutVariant.VERTICAL) { book ->
-            findNavController().navigate(
-                R.id.action_library_to_detail,
-                Bundle().apply { putLong("bookId", book.id) }
-            )
+            findNavController().navigate(BookListFragmentDirections.actionLibraryToDetail(book.id))
         }
         binding.recycler.apply {
             layoutManager = LinearLayoutManager(requireContext())
@@ -63,31 +66,43 @@ class BookListFragment : Fragment() {
 
         // Swipe-to-delete with undo via Snackbar — repository delete is fire-and-forget
         // because Room's reactive flow re-emits the post-delete state.
-        val touchHelper = androidx.recyclerview.widget.ItemTouchHelper(
-            object : androidx.recyclerview.widget.ItemTouchHelper.SimpleCallback(
+        val touchHelper = ItemTouchHelper(
+            object : ItemTouchHelper.SimpleCallback(
                 0,
-                androidx.recyclerview.widget.ItemTouchHelper.LEFT or androidx.recyclerview.widget.ItemTouchHelper.RIGHT
+                ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
             ) {
                 override fun onMove(
-                    recyclerView: androidx.recyclerview.widget.RecyclerView,
-                    viewHolder: androidx.recyclerview.widget.RecyclerView.ViewHolder,
-                    target: androidx.recyclerview.widget.RecyclerView.ViewHolder
+                    recyclerView: RecyclerView,
+                    viewHolder: RecyclerView.ViewHolder,
+                    target: RecyclerView.ViewHolder
                 ) = false
 
                 override fun onSwiped(
-                    viewHolder: androidx.recyclerview.widget.RecyclerView.ViewHolder,
+                    viewHolder: RecyclerView.ViewHolder,
                     direction: Int
                 ) {
                     val pos = viewHolder.bindingAdapterPosition
+                    // A second swipe can land while the list is mid-diff.
+                    if (pos == RecyclerView.NO_POSITION) return
                     val book = adapter.currentList[pos]
+                    val appContext = requireContext().applicationContext
                     viewModel.delete(book)
-                    WidgetRefresher.refresh(requireContext())
+                    WidgetRefresher.refresh(appContext)
                     Snackbar.make(
                         binding.root,
                         getString(R.string.snackbar_book_deleted, book.title),
                         Snackbar.LENGTH_LONG
                     )
-                        .setAction(R.string.action_undo) { viewModel.restore(book) }
+                        .setAction(R.string.action_undo) {
+                            viewModel.restore(book)
+                            WidgetRefresher.refresh(appContext)
+                        }
+                        .addCallback(object : Snackbar.Callback() {
+                            override fun onDismissed(bar: Snackbar, event: Int) {
+                                // The cover file is kept until Undo is no longer possible.
+                                if (event != DISMISS_EVENT_ACTION) viewModel.discardCover(book)
+                            }
+                        })
                         .show()
                 }
             }
@@ -95,10 +110,7 @@ class BookListFragment : Fragment() {
         touchHelper.attachToRecyclerView(binding.recycler)
 
         binding.fabAdd.setOnClickListener {
-            findNavController().navigate(
-                R.id.action_library_to_addEdit,
-                Bundle().apply { putLong("bookId", 0L) }
-            )
+            findNavController().navigate(BookListFragmentDirections.actionLibraryToAddEdit())
         }
 
         binding.btnSort.setOnClickListener { showSortMenu() }
@@ -115,10 +127,7 @@ class BookListFragment : Fragment() {
         })
 
         binding.btnEmptyAdd.setOnClickListener {
-            findNavController().navigate(
-                R.id.action_library_to_addEdit,
-                Bundle().apply { putLong("bookId", 0L) }
-            )
+            findNavController().navigate(BookListFragmentDirections.actionLibraryToAddEdit())
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
@@ -148,9 +157,9 @@ class BookListFragment : Fragment() {
     private fun showSortMenu() {
         val options = SortOrder.entries.toTypedArray()
         val current = viewModel.sortOrder.value
-        val labels = options.map { it.displayLabel }.toTypedArray()
+        val labels = options.map { getString(it.labelRes) }.toTypedArray()
         MaterialAlertDialogBuilder(requireContext())
-            .setTitle("Sort by")
+            .setTitle(R.string.library_sort_title)
             .setSingleChoiceItems(labels, options.indexOf(current)) { dialog, which ->
                 viewModel.setSortOrder(options[which])
                 dialog.dismiss()
@@ -162,9 +171,9 @@ class BookListFragment : Fragment() {
     private fun showFilterMenu() {
         val options = StatusFilter.entries.toTypedArray()
         val current = viewModel.statusFilter.value
-        val labels = options.map { it.displayLabel }.toTypedArray()
+        val labels = options.map { getString(it.labelRes) }.toTypedArray()
         MaterialAlertDialogBuilder(requireContext())
-            .setTitle("Filter by status")
+            .setTitle(R.string.library_filter_title)
             .setSingleChoiceItems(labels, options.indexOf(current)) { dialog, which ->
                 viewModel.setStatusFilter(options[which])
                 dialog.dismiss()

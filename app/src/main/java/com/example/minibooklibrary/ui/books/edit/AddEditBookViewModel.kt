@@ -1,12 +1,15 @@
 package com.example.minibooklibrary.ui.books.edit
 
+import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.minibooklibrary.R
 import com.example.minibooklibrary.data.local.entity.BookEntity
 import com.example.minibooklibrary.data.preferences.PreferencesManager
 import com.example.minibooklibrary.data.remote.GoogleBooksService
 import com.example.minibooklibrary.data.repository.BookRepository
 import com.example.minibooklibrary.domain.ReadingStatus
+import com.example.minibooklibrary.util.Isbn
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -73,9 +76,9 @@ class AddEditBookViewModel(
      */
     fun lookupIsbn(isbn: String) {
         if (_form.value.isLooking) return
-        val cleaned = isbn.trim()
-        if (cleaned.length < 10) {
-            _events.tryEmit(EditEvent.LookupFailed("Enter a 10 or 13 digit ISBN"))
+        val cleaned = Isbn.normalize(isbn)
+        if (cleaned == null) {
+            _events.tryEmit(EditEvent.LookupFailed(R.string.addedit_isbn_invalid))
             return
         }
         _form.value = _form.value.copy(isLooking = true)
@@ -83,7 +86,7 @@ class AddEditBookViewModel(
             val result = googleBooksService.lookupByIsbn(cleaned)
             if (result == null) {
                 _form.value = _form.value.copy(isLooking = false)
-                _events.tryEmit(EditEvent.LookupFailed("No book found for that ISBN"))
+                _events.tryEmit(EditEvent.LookupFailed(R.string.addedit_isbn_not_found))
                 return@launch
             }
             val current = _form.value
@@ -134,13 +137,14 @@ class AddEditBookViewModel(
     }
 
     private fun validate(form: BookForm): ValidationErrors {
-        val titleError = if (form.title.isBlank()) "Title is required" else null
-        val authorError = if (form.author.isBlank()) "Author is required" else null
+        val titleError = if (form.title.isBlank()) R.string.addedit_error_title else null
+        val authorError = if (form.author.isBlank()) R.string.addedit_error_author else null
+        val year = form.year.toIntOrNull()
         val yearError = when {
-            form.year.isBlank() -> "Year is required"
-            form.year.toIntOrNull() == null -> "Year must be a number"
-            (form.year.toInt() !in 1000..(Calendar.getInstance().get(Calendar.YEAR) + 1)) ->
-                "Enter a realistic year"
+            form.year.isBlank() -> R.string.addedit_error_year_required
+            year == null -> R.string.addedit_error_year_number
+            year !in 1000..(Calendar.getInstance().get(Calendar.YEAR) + 1) ->
+                R.string.addedit_error_year_range
             else -> null
         }
         val pagesError = run {
@@ -148,8 +152,8 @@ class AddEditBookViewModel(
             val total = form.totalPages.toIntOrNull() ?: 0
             when {
                 form.readingStatus == ReadingStatus.CURRENTLY_READING && total == 0 ->
-                    "Set a total page count to track progress"
-                current > total && total > 0 -> "Current page can't exceed total pages"
+                    R.string.addedit_error_pages_required
+                current > total && total > 0 -> R.string.addedit_error_pages_exceed
                 else -> null
             }
         }
@@ -162,13 +166,13 @@ class AddEditBookViewModel(
     }
 }
 
+/** Default category used when the user hasn't picked one — matches strings.xml order. */
+internal const val DEFAULT_CATEGORY = "Fiction"
+
 /**
  * The Add/Edit form state. Strings are kept raw so the UI can show partial input
  * (e.g. "20" while the user is still typing a year).
  */
-/** Default category used when the user hasn't picked one — matches strings.xml order. */
-internal const val DEFAULT_CATEGORY = "Fiction"
-
 data class BookForm(
     val title: String = "",
     val author: String = "",
@@ -184,11 +188,12 @@ data class BookForm(
     val isLooking: Boolean = false
 )
 
+/** Each field holds a string resource id, or null when that field is fine. */
 data class ValidationErrors(
-    val titleError: String? = null,
-    val authorError: String? = null,
-    val yearError: String? = null,
-    val pagesError: String? = null
+    @StringRes val titleError: Int? = null,
+    @StringRes val authorError: Int? = null,
+    @StringRes val yearError: Int? = null,
+    @StringRes val pagesError: Int? = null
 ) {
     val isValid: Boolean get() = listOfNotNull(
         titleError, authorError, yearError, pagesError
@@ -198,5 +203,5 @@ data class ValidationErrors(
 sealed class EditEvent {
     data class Saved(val wasEdit: Boolean) : EditEvent()
     data class LookupSucceeded(val title: String) : EditEvent()
-    data class LookupFailed(val message: String) : EditEvent()
+    data class LookupFailed(@StringRes val messageRes: Int) : EditEvent()
 }

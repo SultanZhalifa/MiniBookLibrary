@@ -1,7 +1,9 @@
 package com.example.minibooklibrary.ui.auth
 
+import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.minibooklibrary.R
 import com.example.minibooklibrary.data.repository.AuthResult
 import com.example.minibooklibrary.data.repository.UserRepository
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -28,7 +30,7 @@ class AuthViewModel(private val userRepository: UserRepository) : ViewModel() {
 
     fun login(username: String, password: String) {
         if (_uiState.value.isLoading) return
-        _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
+        _uiState.value = _uiState.value.copy(isLoading = true, error = null)
         viewModelScope.launch {
             when (val result = userRepository.login(username, password)) {
                 is AuthResult.Success -> {
@@ -38,7 +40,7 @@ class AuthViewModel(private val userRepository: UserRepository) : ViewModel() {
                 is AuthResult.Failure -> {
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
-                        errorMessage = result.message
+                        error = result.reason.toAuthError()
                     )
                 }
             }
@@ -48,10 +50,12 @@ class AuthViewModel(private val userRepository: UserRepository) : ViewModel() {
     fun register(username: String, email: String, password: String, confirmPassword: String) {
         if (_uiState.value.isLoading) return
         if (password != confirmPassword) {
-            _uiState.value = _uiState.value.copy(errorMessage = "Passwords don't match")
+            _uiState.value = _uiState.value.copy(
+                error = AuthError(AuthField.CONFIRM_PASSWORD, R.string.auth_error_password_mismatch)
+            )
             return
         }
-        _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
+        _uiState.value = _uiState.value.copy(isLoading = true, error = null)
         viewModelScope.launch {
             when (val result = userRepository.register(username, email, password)) {
                 is AuthResult.Success -> {
@@ -61,7 +65,7 @@ class AuthViewModel(private val userRepository: UserRepository) : ViewModel() {
                 is AuthResult.Failure -> {
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
-                        errorMessage = result.message
+                        error = result.reason.toAuthError()
                     )
                 }
             }
@@ -69,23 +73,37 @@ class AuthViewModel(private val userRepository: UserRepository) : ViewModel() {
     }
 
     fun consumeError() {
-        _uiState.value = _uiState.value.copy(errorMessage = null)
-    }
-
-    /** Sign-out — clears persisted session and emits a navigation event. */
-    fun logout() {
-        userRepository.logout()
-        viewModelScope.launch { _events.emit(AuthEvent.LoggedOut) }
+        _uiState.value = _uiState.value.copy(error = null)
     }
 }
 
 data class AuthUiState(
     val isLoading: Boolean = false,
-    val errorMessage: String? = null
+    val error: AuthError? = null
 )
+
+enum class AuthField { USERNAME, EMAIL, PASSWORD, CONFIRM_PASSWORD }
+
+/** An error to show inline under [field]. */
+data class AuthError(val field: AuthField, @StringRes val messageRes: Int)
+
+internal fun AuthResult.FailureReason.toAuthError(): AuthError = when (this) {
+    AuthResult.FailureReason.MISSING_FIELDS ->
+        AuthError(AuthField.USERNAME, R.string.auth_error_username_required)
+    AuthResult.FailureReason.USERNAME_TOO_SHORT ->
+        AuthError(AuthField.USERNAME, R.string.auth_error_username_short)
+    AuthResult.FailureReason.USERNAME_TAKEN ->
+        AuthError(AuthField.USERNAME, R.string.auth_error_username_taken)
+    AuthResult.FailureReason.INVALID_EMAIL ->
+        AuthError(AuthField.EMAIL, R.string.auth_error_email_invalid)
+    AuthResult.FailureReason.PASSWORD_TOO_SHORT ->
+        AuthError(AuthField.PASSWORD, R.string.auth_error_password_short)
+    // Deliberately not saying which half was wrong.
+    AuthResult.FailureReason.INVALID_CREDENTIALS ->
+        AuthError(AuthField.PASSWORD, R.string.auth_error_invalid_credentials)
+}
 
 sealed class AuthEvent {
     data class LoggedIn(val userId: Long, val username: String) : AuthEvent()
     data class Registered(val username: String) : AuthEvent()
-    data object LoggedOut : AuthEvent()
 }

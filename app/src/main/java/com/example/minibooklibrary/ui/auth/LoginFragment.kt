@@ -44,18 +44,18 @@ class LoginFragment : Fragment() {
             binding.tilPassword.error = null
 
             if (username.isBlank()) {
-                binding.tilUsername.error = "Username is required"
+                binding.tilUsername.error = getString(R.string.auth_error_username_required)
                 return@setOnClickListener
             }
             if (password.isBlank()) {
-                binding.tilPassword.error = "Password is required"
+                binding.tilPassword.error = getString(R.string.auth_error_password_required)
                 return@setOnClickListener
             }
             viewModel.login(username, password)
         }
 
         binding.btnGoRegister.setOnClickListener {
-            findNavController().navigate(R.id.action_login_to_register)
+            findNavController().navigate(LoginFragmentDirections.actionLoginToRegister())
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
@@ -63,8 +63,10 @@ class LoginFragment : Fragment() {
                 viewModel.uiState.collect { state ->
                     binding.btnLogin.isEnabled = !state.isLoading
                     binding.progress.visibility = if (state.isLoading) View.VISIBLE else View.GONE
-                    state.errorMessage?.let { error ->
-                        binding.tilPassword.error = error
+                    state.error?.let { error ->
+                        val field = if (error.field == AuthField.USERNAME) binding.tilUsername
+                        else binding.tilPassword
+                        field.error = getString(error.messageRes)
                         viewModel.consumeError()
                     }
                 }

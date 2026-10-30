@@ -7,10 +7,9 @@ import androidx.room.PrimaryKey
 /**
  * Persisted user account.
  *
- * Passwords are stored as a SHA-256 hash with a per-record salt — see
- * [com.example.minibooklibrary.util.PasswordHasher]. This is far from production-grade
- * (a memory-hard KDF like Argon2 / bcrypt would be appropriate) but it removes the obvious
- * footgun of storing plaintext while keeping the dependency footprint small.
+ * [passwordHash] is a self-describing PBKDF2 hash (or a legacy SHA-256 one that gets
+ * upgraded on next login) and [passwordSalt] its per-user salt. See
+ * [com.example.minibooklibrary.util.PasswordHasher].
  */
 @Entity(
     tableName = "users",

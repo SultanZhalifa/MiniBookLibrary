@@ -12,6 +12,7 @@ import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -27,7 +28,7 @@ class UserRepositoryTest {
         val result = repo.register("ab", "ab@example.com", "password123")
         assertTrue(result is AuthResult.Failure)
         assertEquals(
-            AuthResult.FailureReason.VALIDATION,
+            AuthResult.FailureReason.USERNAME_TOO_SHORT,
             (result as AuthResult.Failure).reason
         )
     }
@@ -35,13 +36,13 @@ class UserRepositoryTest {
     @Test
     fun `register fails when email is malformed`() = runTest {
         val result = repo.register("alice", "not-an-email", "password123")
-        assertTrue(result is AuthResult.Failure)
+        assertEquals(AuthResult.FailureReason.INVALID_EMAIL, (result as AuthResult.Failure).reason)
     }
 
     @Test
     fun `register fails when password is shorter than 6 chars`() = runTest {
         val result = repo.register("alice", "alice@example.com", "12345")
-        assertTrue(result is AuthResult.Failure)
+        assertEquals(AuthResult.FailureReason.PASSWORD_TOO_SHORT, (result as AuthResult.Failure).reason)
     }
 
     @Test
@@ -71,6 +72,7 @@ class UserRepositoryTest {
                 entity.username == "alice" &&
                     entity.email == "alice@example.com" &&
                     entity.passwordHash != "password123" && // ensure not plaintext
+                    entity.passwordHash.startsWith("pbkdf2_sha256$") &&
                     entity.passwordSalt.isNotBlank()
             })
         }
@@ -93,6 +95,37 @@ class UserRepositoryTest {
         assertTrue(result is AuthResult.Success)
         verify { preferences.currentUserId = 7L }
         verify { preferences.currentUsername = "alice" }
+        // Already on the current format: no rehash.
+        coVerify(exactly = 0) { userDao.updatePassword(any(), any(), any()) }
+    }
+
+    @Test
+    fun `login with a legacy SHA-256 hash succeeds and upgrades it to PBKDF2`() = runTest {
+        val salt = PasswordHasher.newSalt()
+        coEvery { userDao.findByUsername("alice") } returns UserEntity(
+            id = 7L,
+            username = "alice",
+            email = "alice@example.com",
+            passwordHash = PasswordHasher.legacySha256("password123", salt),
+            passwordSalt = salt
+        )
+
+        val result = repo.login("alice", "password123")
+
+        assertTrue(result is AuthResult.Success)
+        coVerify {
+            userDao.updatePassword(7L, match { it.startsWith("pbkdf2_sha256$") }, match { it != salt })
+        }
+    }
+
+    @Test
+    fun `validateSession clears a session whose user no longer exists`() = runTest {
+        every { preferences.isLoggedIn } returns true
+        every { preferences.currentUserId } returns 7L
+        coEvery { userDao.findById(7L) } returns null
+
+        assertFalse(repo.validateSession())
+        verify { preferences.clearSession() }
     }
 
     @Test

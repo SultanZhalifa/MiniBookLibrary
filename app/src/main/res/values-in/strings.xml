@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Bahasa Indonesia. Folder pakai qualifier "in" (bukan "id") karena itu kode yang
+     dipakai Android untuk bahasa Indonesia di semua versi. -->
+<resources>
+    <!-- Onboarding -->
+    <string name="onboarding_title_1">Catat semua bukumu</string>
+    <string name="onboarding_body_1">Simpan judul, penulis, sampul, dan rating. Semua koleksimu rapi di satu tempat.</string>
+    <string name="onboarding_title_2">Pantau progres baca</string>
+    <string name="onboarding_body_2">Tandai buku sebagai ingin dibaca, sedang dibaca, atau selesai. Catat halaman sambil jalan.</string>
+    <string name="onboarding_title_3">Statistik &amp; backup</string>
+    <string name="onboarding_body_3">Jaga streak membaca, ekspor koleksi ke PDF, atau backup ke JSON kapan saja.</string>
+    <string name="onboarding_skip">Lewati</string>
+    <string name="onboarding_next">Lanjut</string>
+    <string name="onboarding_get_started">Mulai</string>
+
+    <!-- Auth -->
+    <string name="login_title">Selamat datang lagi</string>
+    <string name="login_subtitle">Masuk untuk lanjut mencatat bacaanmu.</string>
+    <string name="login_button">Masuk</string>
+    <string name="login_no_account">Belum punya akun?</string>
+    <string name="login_create_account">Daftar</string>
+
+    <string name="register_title">Buat akun</string>
+    <string name="register_subtitle">Cuma sebentar, kok.</string>
+    <string name="register_button">Buat akun</string>
+
+    <string name="hint_username">Username</string>
+    <string name="hint_email">Alamat email</string>
+    <string name="hint_password">Password</string>
+    <string name="hint_confirm_password">Ulangi password</string>
+
+    <string name="auth_error_username_required">Username wajib diisi</string>
+    <string name="auth_error_email_required">Email wajib diisi</string>
+    <string name="auth_error_password_required">Password wajib diisi</string>
+    <string name="auth_error_confirm_required">Ulangi password-mu</string>
+    <string name="auth_error_username_short">Username minimal 3 karakter</string>
+    <string name="auth_error_email_invalid">Format email tidak valid</string>
+    <string name="auth_error_password_short">Password minimal 6 karakter</string>
+    <string name="auth_error_username_taken">Username itu sudah dipakai</string>
+    <string name="auth_error_invalid_credentials">Username atau password salah</string>
+    <string name="auth_error_password_mismatch">Password tidak sama</string>
+    <string name="auth_registered">Halo, %1$s! Silakan masuk.</string>
+
+    <!-- Main / dashboard -->
+    <string name="tab_dashboard">Beranda</string>
+    <string name="tab_library">Koleksi</string>
+    <string name="tab_settings">Pengaturan</string>
+
+    <string name="greeting_morning">Selamat pagi,</string>
+    <string name="greeting_afternoon">Selamat siang,</string>
+    <string name="greeting_evening">Selamat sore,</string>
+    <string name="greeting_night">Selamat malam,</string>
+    <string name="dashboard_default_name">pembaca</string>
+
+    <string name="dashboard_total_books">Total buku</string>
+    <string name="dashboard_average_rating">Rata-rata</string>
+    <string name="dashboard_status_breakdown">Status baca</string>
+    <string name="dashboard_recent_title">Baru ditambahkan</string>
+    <string name="dashboard_recent_view_all">Lihat semua</string>
+    <string name="dashboard_empty_recent">Tambahkan buku pertamamu supaya muncul di sini.</string>
+
+    <string name="dashboard_reading_title">Aktivitas baca</string>
+    <string name="dashboard_streak_label">hari berturut-turut</string>
+    <plurals name="dashboard_pages_this_week">
+        <item quantity="other">%1$d halaman minggu ini</item>
+    </plurals>
+    <plurals name="dashboard_longest_streak">
+        <item quantity="other">%1$d hari</item>
+    </plurals>
+    <string name="dashboard_reading_footer">Selesai di %1$d: %2$d · Streak terpanjang: %3$s</string>
+    <string name="dashboard_reading_hint">Update halaman terakhir di buku yang sedang kamu baca, nanti muncul di sini.</string>
+
+    <!-- Library -->
+    <string name="library_title">Koleksiku</string>
+    <string name="library_search_hint">Cari judul, penulis, atau kategori</string>
+    <string name="library_empty_title">Belum ada buku</string>
+    <string name="library_empty_body">Ketuk tombol di bawah untuk menambahkan buku pertamamu.</string>
+    <string name="library_no_results_title">Tidak ditemukan</string>
+    <string name="library_no_results_body">Coba kata kunci lain, atau ubah filternya.</string>
+    <string name="library_add_first_book">Tambah buku</string>
+    <string name="library_count">%1$d buku</string>
+    <string name="library_count_filtered">%1$d dari %2$d</string>
+    <string name="library_sort_title">Urutkan</string>
+    <string name="library_filter_title">Filter status</string>
+
+    <string name="sort_newest">Terbaru</string>
+    <string name="sort_oldest">Terlama</string>
+    <string name="sort_title_asc">Judul (A–Z)</string>
+    <string name="sort_title_desc">Judul (Z–A)</string>
+    <string name="sort_rating_desc">Rating tertinggi</string>
+    <string name="sort_rating_asc">Rating terendah</string>
+    <string name="filter_all">Semua buku</string>
+
+    <!-- Add / Edit -->
+    <string name="addedit_add_title">Tambah buku</string>
+    <string name="addedit_edit_title">Edit buku</string>
+    <string name="addedit_isbn_hint">ISBN (10 atau 13 digit)</string>
+    <string name="addedit_isbn_lookup">Isi</string>
+    <string name="addedit_isbn_section">Isi otomatis dari ISBN</string>
+    <string name="addedit_isbn_lookup_success">Ketemu &quot;%1$s&quot;. Cek lagi detailnya sebelum disimpan.</string>
+    <string name="addedit_isbn_invalid">ISBN-nya sepertinya tidak valid</string>
+    <string name="addedit_isbn_not_found">Tidak ada buku dengan ISBN itu</string>
+    <string name="addedit_scan_isbn">Scan barcode ISBN</string>
+    <string name="addedit_details_section">Detail buku</string>
+    <string name="addedit_field_title">Judul</string>
+    <string name="addedit_field_author">Penulis</string>
+    <string name="addedit_field_year">Tahun terbit</string>
+    <string name="addedit_field_category">Kategori</string>
+    <string name="addedit_field_status">Status baca</string>
+    <string name="addedit_field_rating">Rating darimu</string>
+    <string name="addedit_field_current_page">Halaman sekarang</string>
+    <string name="addedit_field_total_pages">Jumlah halaman</string>
+    <string name="addedit_field_notes">Catatan pribadi</string>
+    <string name="addedit_pick_cover">Pilih sampul</string>
+    <string name="addedit_remove_cover">Hapus sampul</string>
+    <string name="addedit_cover_failed">Gambar itu tidak bisa dibuka</string>
+    <string name="addedit_save">Simpan buku</string>
+    <string name="addedit_update">Simpan perubahan</string>
+
+    <string name="addedit_error_title">Judul wajib diisi</string>
+    <string name="addedit_error_author">Penulis wajib diisi</string>
+    <string name="addedit_error_year_required">Tahun wajib diisi</string>
+    <string name="addedit_error_year_number">Tahun harus berupa angka</string>
+    <string name="addedit_error_year_range">Masukkan tahun yang masuk akal</string>
+    <string name="addedit_error_pages_required">Isi jumlah halaman untuk mencatat progres</string>
+    <string name="addedit_error_pages_exceed">Halaman sekarang tidak boleh melebihi jumlah halaman</string>
+
+    <!-- Barcode scanner -->
+    <string name="scanner_title">Scan barcode ISBN</string>
+    <string name="scanner_hint">Arahkan kamera ke barcode di sampul belakang</string>
+    <string name="scanner_permission_denied">Izin kamera diperlukan untuk scan barcode</string>
+
+    <!-- Detail -->
+    <string name="detail_title">Detail buku</string>
+    <string name="detail_share">Bagikan</string>
+    <string name="detail_edit">Edit</string>
+    <string name="detail_delete">Hapus</string>
+    <string name="detail_progress">Progres</string>
+    <string name="detail_rating_label">Rating</string>
+    <string name="detail_published_label">Terbit</string>
+    <string name="detail_added_on">Ditambahkan %1$s</string>
+    <string name="detail_no_notes">Belum ada catatan.</string>
+    <string name="detail_progress_label">Halaman %1$d dari %2$d (%3$d%%)</string>
+    <string name="detail_update_progress">Update progres</string>
+    <string name="detail_progress_of_total">dari %1$d</string>
+    <string name="detail_not_found">Buku tidak ditemukan</string>
+    <string name="detail_deleted">Buku dihapus</string>
+    <string name="book_by_author">oleh %1$s</string>
+
+    <string name="share_published">Terbit: %1$d</string>
+    <string name="share_category">Kategori: %1$s</string>
+    <string name="share_status">Status: %1$s</string>
+    <string name="share_rating">Rating: %1$s/5</string>
+    <string name="share_notes">Catatan: %1$s</string>
+
+    <!-- Settings -->
+    <string name="settings_appearance">Tampilan</string>
+    <string name="settings_theme">Tema</string>
+    <string name="settings_data">Data kamu</string>
+    <string name="settings_export_pdf">Ekspor koleksi ke PDF</string>
+    <string name="settings_export_pdf_summary">Simpan ringkasan yang bisa dicetak, di folder mana pun.</string>
+    <string name="settings_backup">Backup ke JSON</string>
+    <string name="settings_backup_summary">Simpan buku dan riwayat baca ke file JSON.</string>
+    <string name="settings_restore">Pulihkan dari JSON</string>
+    <string name="settings_restore_summary">Pilih file backup untuk diimpor.</string>
+    <string name="settings_signed_in_as">Masuk sebagai %1$s</string>
+    <string name="settings_signed_in_fallback">kamu</string>
+    <string name="settings_logout">Keluar</string>
+    <string name="settings_about_footer">Mini Book Library %1$s</string>
+    <string name="settings_no_app_to_open">Tidak ada aplikasi yang bisa membuka file ini</string>
+    <string name="settings_error_pdf">PDF gagal diekspor. Coba lagi.</string>
+    <string name="settings_error_backup">File backup gagal disimpan</string>
+    <string name="settings_error_restore">File itu bukan backup Mini Book Library</string>
+    <string name="settings_error_generic">Ada yang salah. Coba lagi.</string>
+
+    <!-- PDF export -->
+    <string name="pdf_subtitle">Diekspor %1$s · %2$s</string>
+    <plurals name="pdf_book_count">
+        <item quantity="other">%1$d buku</item>
+    </plurals>
+    <string name="pdf_empty">Tidak ada buku untuk diekspor.</string>
+    <string name="pdf_page_footer">Halaman %1$d dari %2$d</string>
+
+    <!-- Common -->
+    <string name="action_back">Kembali</string>
+    <string name="action_cancel">Batal</string>
+    <string name="action_close">Tutup</string>
+    <string name="action_delete">Hapus</string>
+    <string name="action_save">Simpan</string>
+    <string name="action_share">Bagikan</string>
+    <string name="action_undo">Urungkan</string>
+    <string name="action_open">Buka</string>
+
+    <string name="confirm_delete_title">Hapus buku?</string>
+    <string name="confirm_delete_body">Buku ini akan dihapus dari koleksimu dan tidak bisa dikembalikan.</string>
+
+    <string name="confirm_logout_title">Keluar?</string>
+    <string name="confirm_logout_body">Kamu bisa masuk lagi kapan saja. Koleksimu tetap aman.</string>
+
+    <string name="snackbar_book_added">Buku ditambahkan ke koleksi</string>
+    <string name="snackbar_book_updated">Perubahan disimpan</string>
+    <string name="snackbar_book_deleted">%1$s dihapus</string>
+    <string name="snackbar_pdf_exported">PDF tersimpan</string>
+    <string name="snackbar_backup_exported">Backup tersimpan</string>
+    <plurals name="snackbar_restore_done">
+        <item quantity="other">%1$d buku dipulihkan</item>
+    </plurals>
+
+    <string name="status_want_to_read">Ingin Dibaca</string>
+    <string name="status_currently_reading">Sedang Dibaca</string>
+    <string name="status_finished">Selesai</string>
+
+    <string name="theme_system">Sistem</string>
+    <string name="theme_light">Terang</string>
+    <string name="theme_dark">Gelap</string>
+
+    <string name="rating_unrated">Belum dinilai</string>
+
+    <!-- Home-screen widget -->
+    <string name="widget_title">Sedang Dibaca</string>
+    <string name="widget_no_book">Belum ada buku yang sedang dibaca.\nBuka aplikasi untuk mulai.</string>
+    <string name="widget_not_logged_in">Masuk ke Mini Book Library untuk melihat progres bacamu.</string>
+    <string name="widget_page_progress">Halaman %1$d dari %2$d</string>
+    <string name="widget_tap_to_open">Ketuk untuk membuka</string>
+</resources>

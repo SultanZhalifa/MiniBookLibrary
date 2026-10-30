@@ -8,6 +8,7 @@
     android:background="?android:colorBackground">
 
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
@@ -19,11 +20,12 @@
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
             <LinearLayout
+                android:id="@+id/header"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:paddingTop="64dp"
+                android:paddingTop="32dp"
                 android:paddingBottom="32dp">
 
                 <com.google.android.material.card.MaterialCardView
@@ -50,16 +52,6 @@
                     android:fontFamily="sans-serif-black"
                     android:textSize="24sp"
                     tools:text="Sultan Khalifa" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:alpha="0.6"
-                    android:text="Pro Member"
-                    android:textAllCaps="true"
-                    android:letterSpacing="0.1"
-                    android:textSize="12sp"
-                    android:fontFamily="sans-serif-medium" />
             </LinearLayout>
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
@@ -122,7 +114,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="System" />
+                            android:text="@string/theme_system" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/themeLight"
@@ -130,7 +122,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Light" />
+                            android:text="@string/theme_light" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/themeDark"
@@ -138,7 +130,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Dark" />
+                            android:text="@string/theme_dark" />
                     </com.google.android.material.button.MaterialButtonToggleGroup>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -194,12 +186,13 @@
 
             <!-- About Section -->
             <TextView
+                android:id="@+id/aboutFooter"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="48dp"
                 android:gravity="center"
                 android:alpha="0.5"
-                android:text="Mini Book Library v2.0\nMade with ❤️ for Readers"
+                tools:text="Mini Book Library 2.1"
                 android:lineSpacingExtra="4dp"
                 android:textSize="12sp" />
 

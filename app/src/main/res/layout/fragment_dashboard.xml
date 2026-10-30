@@ -7,10 +7,12 @@
     android:layout_height="match_parent"
     android:background="?android:colorBackground">
 
+    <!-- The gradient sits on the AppBarLayout, which spans the status bar area, rather
+         than on the padded header inside it, so nothing between them can leave a gap. -->
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
+        android:background="@drawable/bg_gradient_header"
         app:elevation="0dp">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
@@ -19,11 +21,11 @@
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
             <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/header"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bg_gradient_header"
                 android:paddingHorizontal="24dp"
-                android:paddingTop="48dp"
+                android:paddingTop="24dp"
                 android:paddingBottom="48dp">
 
                 <TextView
@@ -86,7 +88,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="12dp"
-                android:layout_marginTop="-24dp"
+                android:layout_marginTop="12dp"
                 android:columnCount="2"
                 android:rowCount="1">
 
@@ -174,6 +176,91 @@
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
             </GridLayout>
+
+            <TextView
+                style="@style/TextAppearance.MiniBookLibrary.Title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="24dp"
+                android:layout_marginTop="24dp"
+                android:text="@string/dashboard_reading_title"
+                android:textSize="20sp" />
+
+            <com.google.android.material.card.MaterialCardView
+                style="@style/Widget.Material3.CardView.Filled"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="12dp"
+                app:cardBackgroundColor="?attr/colorSurfaceVariant"
+                app:cardCornerRadius="24dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="bottom">
+
+                        <TextView
+                            android:id="@+id/tvStreak"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-black"
+                            android:textColor="?attr/colorPrimary"
+                            android:textSize="36sp"
+                            tools:text="6" />
+
+                        <TextView
+                            android:id="@+id/tvStreakLabel"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginBottom="8dp"
+                            android:layout_weight="1"
+                            android:fontFamily="sans-serif-medium"
+                            tools:text="day streak" />
+
+                        <TextView
+                            android:id="@+id/tvPagesThisWeek"
+                            style="@style/TextAppearance.MiniBookLibrary.Caption"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            tools:text="214 pages this week" />
+                    </LinearLayout>
+
+                    <!-- Seven columns (bar + weekday initial), built in DashboardFragment. -->
+                    <LinearLayout
+                        android:id="@+id/weekBars"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:importantForAccessibility="no"
+                        android:orientation="horizontal" />
+
+                    <TextView
+                        android:id="@+id/tvReadingFooter"
+                        style="@style/TextAppearance.MiniBookLibrary.Caption"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        tools:text="Finished in 2026: 9 · Longest streak: 14 days" />
+
+                    <TextView
+                        android:id="@+id/tvReadingHint"
+                        style="@style/TextAppearance.MiniBookLibrary.Caption"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="@string/dashboard_reading_hint"
+                        android:visibility="gone" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
             <TextView
                 style="@style/TextAppearance.MiniBookLibrary.Title"

@@ -5,19 +5,25 @@ import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
-import android.graphics.BitmapFactory
 import android.view.View
 import android.widget.RemoteViews
 import com.example.minibooklibrary.R
+import com.example.minibooklibrary.data.local.ImageStorage
 import com.example.minibooklibrary.data.local.entity.BookEntity
 import com.example.minibooklibrary.di.ServiceLocator
-import com.example.minibooklibrary.ui.main.MainActivity
+import com.example.minibooklibrary.ui.RouterActivity
+import java.io.File
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
-import java.io.File
 
+/**
+ * Home-screen widget showing the book most recently touched while "Currently Reading".
+ *
+ * Refreshed by the system on its schedule and by [WidgetRefresher] whenever the app
+ * changes something the widget shows (save, delete, progress, restore, sign-out).
+ */
 class CurrentlyReadingWidget : AppWidgetProvider() {
 
     override fun onUpdate(
@@ -25,8 +31,15 @@ class CurrentlyReadingWidget : AppWidgetProvider() {
         appWidgetManager: AppWidgetManager,
         appWidgetIds: IntArray
     ) {
-        for (id in appWidgetIds) {
-            updateWidget(context, appWidgetManager, id)
+        // goAsync keeps the process alive until the Room read finishes; without it the
+        // system is free to kill us as soon as onUpdate returns.
+        val pending = goAsync()
+        scope.launch {
+            try {
+                appWidgetIds.forEach { render(context, appWidgetManager, it) }
+            } finally {
+                pending.finish()
+            }
         }
     }
 
@@ -34,41 +47,51 @@ class CurrentlyReadingWidget : AppWidgetProvider() {
 
         private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
+        /** Widget cover is ~56dp tall; 256px covers xxxhdpi with room to spare. */
+        private const val COVER_MAX_PX = 256
+
         fun updateWidget(
             context: Context,
             appWidgetManager: AppWidgetManager,
             appWidgetId: Int
         ) {
-            scope.launch {
-                val prefs = ServiceLocator.providePreferences(context)
-                val views = RemoteViews(context.packageName, R.layout.widget_currently_reading)
+            scope.launch { render(context, appWidgetManager, appWidgetId) }
+        }
 
-                val launchIntent = Intent(context, MainActivity::class.java).apply {
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-                }
-                val pendingIntent = PendingIntent.getActivity(
-                    context, 0, launchIntent,
-                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-                )
-                views.setOnClickPendingIntent(R.id.widgetRoot, pendingIntent)
+        private suspend fun render(
+            context: Context,
+            appWidgetManager: AppWidgetManager,
+            appWidgetId: Int
+        ) {
+            val prefs = ServiceLocator.providePreferences(context)
+            val views = RemoteViews(context.packageName, R.layout.widget_currently_reading)
 
-                if (!prefs.isLoggedIn) {
-                    showEmpty(views, context.getString(R.string.widget_not_logged_in))
-                    appWidgetManager.updateAppWidget(appWidgetId, views)
-                    return@launch
-                }
-
-                val dao = ServiceLocator.provideDatabase(context).bookDao()
-                val book = dao.getCurrentlyReadingBook(prefs.currentUserId)
-
-                if (book == null) {
-                    showEmpty(views, context.getString(R.string.widget_no_book))
-                } else {
-                    showBook(context, views, book)
-                }
-
-                appWidgetManager.updateAppWidget(appWidgetId, views)
+            // Through the router, so a signed-out user lands on sign-in, not an empty shell.
+            val launchIntent = Intent(context, RouterActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             }
+            val pendingIntent = PendingIntent.getActivity(
+                context, 0, launchIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
+            views.setOnClickPendingIntent(R.id.widgetRoot, pendingIntent)
+
+            if (!prefs.isLoggedIn) {
+                showEmpty(views, context.getString(R.string.widget_not_logged_in))
+                appWidgetManager.updateAppWidget(appWidgetId, views)
+                return
+            }
+
+            val book = ServiceLocator.provideBookRepository(context)
+                .getCurrentlyReading(prefs.currentUserId)
+
+            if (book == null) {
+                showEmpty(views, context.getString(R.string.widget_no_book))
+            } else {
+                showBook(context, views, book)
+            }
+
+            appWidgetManager.updateAppWidget(appWidgetId, views)
         }
 
         private fun showBook(context: Context, views: RemoteViews, book: BookEntity) {
@@ -81,19 +104,11 @@ class CurrentlyReadingWidget : AppWidgetProvider() {
             views.setTextViewText(R.id.widgetTitle, book.title)
             views.setTextViewText(R.id.widgetAuthor, book.author)
 
-            val hasCover = !book.coverImageUri.isNullOrBlank()
-            if (hasCover) {
-                val file = File(book.coverImageUri!!)
-                if (file.exists()) {
-                    val bitmap = BitmapFactory.decodeFile(file.absolutePath)
-                    if (bitmap != null) {
-                        views.setImageViewBitmap(R.id.widgetCover, bitmap)
-                    } else {
-                        views.setImageViewResource(R.id.widgetCover, R.drawable.ic_book)
-                    }
-                } else {
-                    views.setImageViewResource(R.id.widgetCover, R.drawable.ic_book)
-                }
+            val cover = book.coverImageUri
+                ?.takeIf { File(it).exists() }
+                ?.let { ImageStorage.loadThumbnail(it, COVER_MAX_PX) }
+            if (cover != null) {
+                views.setImageViewBitmap(R.id.widgetCover, cover)
             } else {
                 views.setImageViewResource(R.id.widgetCover, R.drawable.ic_book)
             }

@@ -1,13 +1,13 @@
 package com.example.minibooklibrary.domain
 
 /** Sort orders the user can apply to the book list. */
-enum class SortOrder(val storageValue: String, val displayLabel: String) {
-    DATE_ADDED_DESC("date_desc", "Newest First"),
-    DATE_ADDED_ASC("date_asc", "Oldest First"),
-    TITLE_ASC("title_asc", "Title (A-Z)"),
-    TITLE_DESC("title_desc", "Title (Z-A)"),
-    RATING_DESC("rating_desc", "Rating (High-Low)"),
-    RATING_ASC("rating_asc", "Rating (Low-High)");
+enum class SortOrder(val storageValue: String) {
+    DATE_ADDED_DESC("date_desc"),
+    DATE_ADDED_ASC("date_asc"),
+    TITLE_ASC("title_asc"),
+    TITLE_DESC("title_desc"),
+    RATING_DESC("rating_desc"),
+    RATING_ASC("rating_asc");
 
     companion object {
         fun fromStorageValue(value: String?): SortOrder =

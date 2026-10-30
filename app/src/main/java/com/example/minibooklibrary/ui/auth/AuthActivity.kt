@@ -9,6 +9,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.minibooklibrary.databinding.ActivityAuthBinding
 import com.example.minibooklibrary.ui.common.ViewModelFactory
+import com.example.minibooklibrary.ui.common.applySystemBarInsets
+import com.example.minibooklibrary.ui.common.setUpEdgeToEdge
 import com.example.minibooklibrary.ui.main.MainActivity
 import kotlinx.coroutines.launch
 
@@ -26,6 +28,8 @@ class AuthActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityAuthBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        setUpEdgeToEdge()
+        binding.root.applySystemBarInsets(top = true, bottom = true, ime = true)
 
         // Listen for session-level events: a successful login navigates to MainActivity
         // and tears down the auth back-stack so Back doesn't return here.

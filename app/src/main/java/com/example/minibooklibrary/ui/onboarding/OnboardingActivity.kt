@@ -7,12 +7,13 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.WindowCompat
 import androidx.viewpager2.widget.ViewPager2
 import com.example.minibooklibrary.R
 import com.example.minibooklibrary.databinding.ActivityOnboardingBinding
 import com.example.minibooklibrary.di.ServiceLocator
 import com.example.minibooklibrary.ui.auth.AuthActivity
+import com.example.minibooklibrary.ui.common.applySystemBarInsets
+import com.example.minibooklibrary.ui.common.setUpEdgeToEdge
 
 /**
  * 3-slide onboarding shown only on the first launch. The "completed" flag is flipped
@@ -42,9 +43,10 @@ class OnboardingActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        WindowCompat.setDecorFitsSystemWindows(window, true)
         binding = ActivityOnboardingBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        setUpEdgeToEdge()
+        binding.root.applySystemBarInsets(top = true, bottom = true)
 
         binding.viewPager.adapter = OnboardingPagerAdapter(pages)
         binding.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {

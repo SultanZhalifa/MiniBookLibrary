@@ -11,9 +11,11 @@ import com.example.minibooklibrary.data.local.entity.BookEntity
 import com.example.minibooklibrary.databinding.ItemBookHorizontalBinding
 import com.example.minibooklibrary.databinding.ItemBookVerticalBinding
 import com.example.minibooklibrary.domain.ReadingStatus
-import com.example.minibooklibrary.util.show
-import com.example.minibooklibrary.util.showIf
+import com.example.minibooklibrary.ui.common.labelRes
+import com.example.minibooklibrary.ui.common.show
+import com.example.minibooklibrary.ui.common.showIf
 import java.io.File
+import java.util.Locale
 
 /**
  * Generic book adapter that renders either a vertical card (library list) or horizontal
@@ -53,17 +55,17 @@ class BookAdapter(
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(book: BookEntity, onClick: (BookEntity) -> Unit) {
             binding.title.text = book.title
-            binding.author.text = "by ${book.author}"
+            binding.author.text = itemView.context.getString(R.string.book_by_author, book.author)
             binding.category.text = book.category
             binding.year.text = if (book.year > 0) book.year.toString() else "—"
 
             val status = ReadingStatus.fromStorageValue(book.readingStatus)
-            binding.statusChip.text = status.displayLabel
+            binding.statusChip.setText(status.labelRes)
             binding.statusChip.chipBackgroundColor = androidx.core.content.ContextCompat
                 .getColorStateList(itemView.context, statusBackgroundColor(status))
 
             binding.rating.showIf(book.rating > 0f)
-            binding.ratingText.text = String.format("%.1f", book.rating)
+            binding.ratingText.text = String.format(Locale.getDefault(), "%.1f", book.rating)
 
             // Cover: file URI when present, gradient placeholder otherwise.
             val cover = book.coverImageUri

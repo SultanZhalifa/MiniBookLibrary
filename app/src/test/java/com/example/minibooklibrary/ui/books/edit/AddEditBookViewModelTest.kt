@@ -1,6 +1,5 @@
 package com.example.minibooklibrary.ui.books.edit
 
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import app.cash.turbine.test
 import com.example.minibooklibrary.data.local.entity.BookEntity
 import com.example.minibooklibrary.data.preferences.PreferencesManager
@@ -24,15 +23,11 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
 import java.util.Calendar
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class AddEditBookViewModelTest {
-
-    @get:Rule
-    val instantExecutor = InstantTaskExecutorRule()
 
     private val testDispatcher = StandardTestDispatcher()
     @Before fun setUp() = Dispatchers.setMain(testDispatcher)
@@ -188,7 +183,7 @@ class AddEditBookViewModelTest {
         coEvery { googleBooks.lookupByIsbn(any()) } returns null
         val vm = newVm()
         vm.events.test {
-            vm.lookupIsbn("9780000000000")
+            vm.lookupIsbn("9780306406157")
             testDispatcher.scheduler.advanceUntilIdle()
             val event = awaitItem()
             assertTrue(event is EditEvent.LookupFailed)
@@ -197,12 +192,14 @@ class AddEditBookViewModelTest {
     }
 
     @Test
-    fun `lookupIsbn rejects too-short input without hitting the network`() = runTest(testDispatcher) {
+    fun `lookupIsbn rejects invalid input without hitting the network`() = runTest(testDispatcher) {
         val vm = newVm()
         vm.events.test {
             vm.lookupIsbn("123")
-            val event = awaitItem()
-            assertTrue(event is EditEvent.LookupFailed)
+            assertTrue(awaitItem() is EditEvent.LookupFailed)
+            // Right length, wrong check digit.
+            vm.lookupIsbn("9780306406158")
+            assertTrue(awaitItem() is EditEvent.LookupFailed)
             cancelAndIgnoreRemainingEvents()
         }
         // Service must not have been called for an obviously invalid ISBN.

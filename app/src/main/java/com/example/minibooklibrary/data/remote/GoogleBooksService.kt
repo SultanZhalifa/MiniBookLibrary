@@ -2,6 +2,7 @@ package com.example.minibooklibrary.data.remote
 
 import android.util.Log
 import com.example.minibooklibrary.domain.BookLookup
+import com.example.minibooklibrary.util.Isbn
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
@@ -31,8 +32,7 @@ class GoogleBooksService(
      * this feature is best-effort and the user can always type fields manually.
      */
     suspend fun lookupByIsbn(isbn: String): BookLookup? = withContext(Dispatchers.IO) {
-        val cleaned = isbn.filter { it.isDigit() || it == 'X' || it == 'x' }
-        if (cleaned.length !in 10..13) return@withContext null
+        val cleaned = Isbn.normalize(isbn) ?: return@withContext null
 
         val url = "https://www.googleapis.com/books/v1/volumes?q=isbn:" +
             URLEncoder.encode(cleaned, "UTF-8") +
