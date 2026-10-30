@@ -1,8 +1,8 @@
 [versions]
 # Build tooling — pinned to versions that match the Gradle 8.13 wrapper.
 agp = "8.11.0"
-kotlin = "2.0.21"
-ksp = "2.0.21-1.0.28"
+kotlin = "2.4.21"
+ksp = "2.3.12"
 
 # AndroidX
 coreKtx = "1.13.1"
@@ -19,7 +19,7 @@ navigation = "2.8.5"
 exifinterface = "1.3.7"
 camerax = "1.3.4"
 
-coroutines = "1.9.0"
+coroutines = "1.11.0"
 coil = "2.7.0"
 # Bundled model, so scanning works without Play Services.
 mlkitBarcode = "17.3.0"
