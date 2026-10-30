@@ -1,6 +1,6 @@
 [versions]
 # Build tooling — pinned to versions that match the Gradle 8.13 wrapper.
-agp = "8.11.0"
+agp = "9.5.0"
 kotlin = "2.0.21"
 ksp = "2.0.21-1.0.28"
 
